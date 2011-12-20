@@ -21,13 +21,8 @@ mvn clean install
 	<dependency>
 	    <groupId>org.springframework.social</groupId>
 	    <artifactId>spring-social-weibo</artifactId>
-        <version>${org.springframework.social.weibo-version}</version>
+        <version>1.0.0-SNAPSHOT</version>
     </dependency>
-
-You can also import this project in Eclipse using M2clipse plugin
-
-File -> Import -> Existing Maven project
-Follow wizard's instructions
 
 # License
 
