@@ -1,6 +1,13 @@
 # spring-social-weibo
 
 This project is an [Spring Social](http://www.springsource.org/spring-social) extension for [weibo](http://www.weibo.com).
+Currently, only basic operations are supported:
+* get profile by id or username
+* get statuses (pagination is not supported): user timeline, home timeline, public timeline
+* update status (only text is supported)
+* get friends (pagination is not supported)
+* get followers (pagination is not supported)
+
 If you are using this project, you should probably consider to read the [term of use of Weibo](http://open.weibo.com/wiki/%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%8D%8F%E8%AE%AE)
 
 # Getting started
