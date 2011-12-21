@@ -1,5 +1,5 @@
 /*
- * Copyright 2011 France Telecom R&D Beijing Co., Ltd
+ * Copyright 2011 France Telecom R&D Beijing Co., Ltd 北京法国电信研发中心有限公司
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
