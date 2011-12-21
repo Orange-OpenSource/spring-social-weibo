@@ -2,6 +2,7 @@
 
 This project is an [Spring Social](http://www.springsource.org/spring-social) extension for [weibo](http://www.weibo.com).
 Currently, only basic operations are supported:
+
 * get profile by id or username
 * get statuses (pagination is not supported): user timeline, home timeline, public timeline
 * update status (only text is supported)
