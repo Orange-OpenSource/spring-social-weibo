@@ -34,7 +34,7 @@
 	<properties>
 		<java-version>1.6</java-version>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-		<org.springframework.social-version>1.0.1.RELEASE</org.springframework.social-version>
+		<org.springframework.social-version>1.0.2.RELEASE</org.springframework.social-version>
 	</properties>
 
 	<dependencies>
@@ -47,7 +47,7 @@
 		<dependency>
 			<groupId>org.springframework.social</groupId>
 			<artifactId>spring-social-core</artifactId>
-			<version>1.0.2.BUILD-SNAPSHOT</version>
+			<version>${org.springframework.social-version}</version>
 		</dependency>
 		<dependency>
 			<groupId>org.springframework.social</groupId>
