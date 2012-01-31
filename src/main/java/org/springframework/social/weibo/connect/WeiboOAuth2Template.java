@@ -24,7 +24,7 @@ import java.util.Map.Entry;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.type.TypeFactory;
+import org.codehaus.jackson.type.TypeReference;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -67,8 +67,10 @@ public class WeiboOAuth2Template extends OAuth2Template {
 					HttpInputMessage inputMessage) throws IOException,
 					HttpMessageNotReadableException {
 
+				TypeReference<Map<String, ?>> mapType = new TypeReference<Map<String, ?>>() {
+				};
 				LinkedHashMap<String, ?> readValue = objectMapper.readValue(
-						inputMessage.getBody(), TypeFactory.type(Map.class));
+						inputMessage.getBody(), mapType);
 				LinkedMultiValueMap<String, String> result = new LinkedMultiValueMap<String, String>();
 				for (Entry<String, ?> currentEntry : readValue.entrySet()) {
 					result.add(currentEntry.getKey(), currentEntry.getValue()
