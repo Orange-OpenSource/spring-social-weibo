@@ -1,18 +1,18 @@
 /*
-* Copyright 2011 France Telecom R&D Beijing Co., Ltd 北京法国电信研发中心有限公司
-*
-* Licensed under the Apache License, Version 2.0 (the "License");
-* you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at
-*
-* http://www.apache.org/licenses/LICENSE-2.0
-*
-* Unless required by applicable law or agreed to in writing, software
-* distributed under the License is distributed on an "AS IS" BASIS,
-* WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
-* See the License for the specific language governing permissions and
-* limitations under the License.
-*/
+ * Copyright 2011 France Telecom R&D Beijing Co., Ltd 北京法国电信研发中心有限公司
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.springframework.social.weibo.api.impl;
 
 import static org.junit.Assert.assertEquals;
@@ -29,11 +29,253 @@ import static org.springframework.social.test.client.ResponseCreators.withRespon
 import org.junit.Test;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Status;
+import org.springframework.social.weibo.api.StatusContentType;
 import org.springframework.social.weibo.api.WeiboProfile;
 
 public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 
 	private TimelineTemplate timelineTemplate;
+
+	@Override
+	public void setUp() {
+		timelineTemplate = new TimelineTemplate(getObjectMapper(),
+				getRestTemplate(), true);
+	}
+
+	@Test
+	public void testGetFriendsTimeline() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/friends_timeline.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline();
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetFriendsTimelinePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/friends_timeline.json?since_id=0&max_id=0&count=10&page=5&base_app=0&feature=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline(10,
+				5);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetFriendsTimelineFilteredByApplication() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/friends_timeline.json?since_id=0&max_id=0&count=10&page=5&base_app=1&feature=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline(10,
+				5, true);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetFriendsTimelineFilteredByFeature() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/friends_timeline.json?since_id=123&max_id=456&count=10&page=5&base_app=0&feature=4"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline(
+				123L, 456L, 10, 5, false, StatusContentType.MUSIC);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetHomeTimeline() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/home_timeline.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline();
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetHomeTimelinePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/home_timeline.json?since_id=0&max_id=0&count=10&page=5&base_app=0&feature=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline(10, 5);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetHomeTimelineFilteredByApplication() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/home_timeline.json?since_id=0&max_id=0&count=10&page=5&base_app=1&feature=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline(10, 5,
+				true);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetHomeTimelineFilteredByFeature() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/home_timeline.json?since_id=123&max_id=456&count=10&page=5&base_app=0&feature=4"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline(123L,
+				456L, 10, 5, false, StatusContentType.MUSIC);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetPublicTimeline() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/public_timeline.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getPublicTimeline();
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetPublicTimelinePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/public_timeline.json?count=10&page=5&base_app=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getPublicTimeline(10,
+				5);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetPublicTimelineFilteredByApplication() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/public_timeline.json?count=10&page=5&base_app=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getPublicTimeline(10,
+				5, true);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetUserTimeline() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/user_timeline.json?uid=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetUserTimelinePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/user_timeline.json?uid=1&since_id=0&max_id=0&count=10&page=5&base_app=0&feature=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L,
+				10, 5);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetUserTimelineFilteredByApplication() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/user_timeline.json?uid=1&since_id=0&max_id=0&count=10&page=5&base_app=1&feature=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L,
+				10, 5, true);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetUserTimelineFilteredByFeature() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/user_timeline.json?uid=1&since_id=123&max_id=456&count=10&page=5&base_app=0&feature=4"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L,
+				123L, 456L, 10, 5, false, StatusContentType.MUSIC);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("weibo from Beijing", firstStatus.getText());
+	}
 
 	@Test
 	public void testUpdateStatus() {
@@ -81,82 +323,11 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(1404376560L, user.getId().longValue());
 	}
 
-	@Override
-	public void setUp() {
-		timelineTemplate = new TimelineTemplate(getObjectMapper(),
-				getRestTemplate(), true);
-	}
-
-	@Test
-	public void testGetPublicTimeline() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/statuses/public_timeline.json"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("timeline"), responseHeaders));
-		CursoredList<Status> statuses = timelineTemplate.getPublicTimeline();
+	private void verifyStatusList(CursoredList<Status> statuses) {
 		assertEquals(2, statuses.size());
-		assertEquals(11488013766L, statuses.getNextCursor());
+		assertEquals(1L, statuses.getNextCursor());
 		assertEquals(0, statuses.getPreviousCursor());
 		assertEquals(81655, statuses.getTotalNumber());
-		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
-	}
-
-	@Test
-	public void testGetHomeTimeline() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/statuses/home_timeline.json"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("timeline"), responseHeaders));
-		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline();
-		assertEquals(2, statuses.size());
-		assertEquals(11488013766L, statuses.getNextCursor());
-		assertEquals(0, statuses.getPreviousCursor());
-		assertEquals(81655, statuses.getTotalNumber());
-		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
-	}
-
-	@Test
-	public void testGetFriendsTimeline() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/statuses/friends_timeline.json"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("timeline"), responseHeaders));
-		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline();
-		assertEquals(2, statuses.size());
-		assertEquals(11488013766L, statuses.getNextCursor());
-		assertEquals(0, statuses.getPreviousCursor());
-		assertEquals(81655, statuses.getTotalNumber());
-		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
-	}
-
-	@Test
-	public void testGetUserTimeline() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/statuses/user_timeline.json"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("timeline"), responseHeaders));
-		CursoredList<Status> statuses = timelineTemplate.getUserTimeline();
-		assertEquals(2, statuses.size());
-		assertEquals(11488013766L, statuses.getNextCursor());
-		assertEquals(0, statuses.getPreviousCursor());
-		assertEquals(81655, statuses.getTotalNumber());
-		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
 	}
 
 }
