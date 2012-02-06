@@ -4,8 +4,8 @@ This project is an [Spring Social](http://www.springsource.org/spring-social) ex
 Currently, only basic operations are supported:
 
 * get profile by id or username
-* get statuses (pagination is not supported): user timeline, home timeline, public timeline
-* update status (only text is supported)
+* get statuses: user timeline, home timeline, public timeline
+* update status
 * get friends (pagination is not supported)
 * get followers (pagination is not supported)
 
