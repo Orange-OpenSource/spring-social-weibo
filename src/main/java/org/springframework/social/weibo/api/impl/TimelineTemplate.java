@@ -182,6 +182,16 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public Status deleteStatus(long id) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("id", String.valueOf(id));
+		return restTemplate.postForObject(buildUri("statuses/destroy.json"),
+				request, Status.class);
+	}
+
+	@Override
 	public Status updateStatus(String message) {
 		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(

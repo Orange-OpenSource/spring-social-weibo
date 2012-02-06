@@ -59,6 +59,8 @@ public interface TimelineOperations {
 			int pageSize, int pageNumber, boolean onlyApplicationStatus,
 			StatusContentType statusContentType);
 
+	Status deleteStatus(long id);
+
 	Status updateStatus(String message);
 
 	Status updateStatus(String message, float latitude, float longitude);
