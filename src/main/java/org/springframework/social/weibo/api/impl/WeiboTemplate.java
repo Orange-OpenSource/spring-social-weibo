@@ -15,7 +15,17 @@
  */
 package org.springframework.social.weibo.api.impl;
 
+import java.nio.charset.Charset;
+import java.util.ArrayList;
+import java.util.List;
+
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.http.MediaType;
+import org.springframework.http.converter.ByteArrayHttpMessageConverter;
+import org.springframework.http.converter.FormHttpMessageConverter;
+import org.springframework.http.converter.HttpMessageConverter;
+import org.springframework.http.converter.ResourceHttpMessageConverter;
+import org.springframework.http.converter.StringHttpMessageConverter;
 import org.springframework.http.converter.json.MappingJacksonHttpMessageConverter;
 import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.oauth2.OAuth2Version;
@@ -63,6 +73,26 @@ public class WeiboTemplate extends AbstractOAuth2ApiBinding implements Weibo {
 		objectMapper.registerModule(new WeiboModule());
 		converter.setObjectMapper(objectMapper);
 		return converter;
+	}
+
+	@Override
+	protected FormHttpMessageConverter getFormMessageConverter() {
+		FormHttpMessageConverter messageConverter = super
+				.getFormMessageConverter();
+		List<HttpMessageConverter<?>> partConverters = new ArrayList<HttpMessageConverter<?>>(
+				3);
+		partConverters.add(new ByteArrayHttpMessageConverter());
+		StringHttpMessageConverter stringHttpMessageConverter = new StringHttpMessageConverter();
+		List<MediaType> mediaTypes = new ArrayList<MediaType>(2);
+		mediaTypes
+				.add(new MediaType("text", "plain", Charset.forName("UTF-8")));
+		mediaTypes.add(MediaType.ALL);
+		stringHttpMessageConverter.setSupportedMediaTypes(mediaTypes);
+		stringHttpMessageConverter.setWriteAcceptCharset(false);
+		partConverters.add(stringHttpMessageConverter);
+		partConverters.add(new ResourceHttpMessageConverter());
+		messageConverter.setPartConverters(partConverters);
+		return messageConverter;
 	}
 
 	private void initialize() {

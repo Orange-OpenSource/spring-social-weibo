@@ -27,6 +27,8 @@ import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
 import org.junit.Test;
+import org.springframework.core.io.ByteArrayResource;
+import org.springframework.core.io.Resource;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.StatusContentType;
@@ -279,11 +281,11 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 
 	@Test
 	public void testUpdateStatus() {
-		String message = "a brand new weibo";
+		String message = "你好";
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/statuses/update.json"))
 				.andExpect(method(POST))
-				.andExpect(body("status=a+brand+new+weibo"))
+				.andExpect(body("status=%E4%BD%A0%E5%A5%BD"))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
 						withResponse(jsonResource("status"), responseHeaders));
@@ -295,18 +297,60 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 
 	@Test
 	public void testUpdateStatusWithLocation() {
-		String message = "a brand new weibo";
+		String message = "你好";
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/statuses/update.json"))
 				.andExpect(method(POST))
 				.andExpect(
-						body("status=a+brand+new+weibo&lat=48.856667&long=2.350833"))
+						body("status=%E4%BD%A0%E5%A5%BD&lat=48.856667&long=2.350833"))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
 						withResponse(jsonResource("status"), responseHeaders));
 
 		Status status = timelineTemplate.updateStatus(message, 48.856667f,
 				2.350833f);
+		verifyStatus(status);
+		assertEquals(message, status.getText());
+	}
+
+	@Test
+	public void testUpdateStatusUploadPicture() {
+		String message = "你好";
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/upload.json"))
+				.andExpect(method(POST))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("status"), responseHeaders));
+
+		Status status = timelineTemplate
+				.updateStatus(message, createResource());
+		verifyStatus(status);
+		assertEquals(message, status.getText());
+	}
+
+	private Resource createResource() {
+		Resource media = new ByteArrayResource("data".getBytes()) {
+			@Override
+			public String getFilename() throws IllegalStateException {
+				return "photo.jpg";
+			}
+		};
+		return media;
+	}
+
+	@Test
+	public void testUpdateStatusUploadPictureWithLocation() {
+		String message = "你好";
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/upload.json"))
+				.andExpect(method(POST))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("status"), responseHeaders));
+
+		Status status = timelineTemplate.updateStatus(message,
+				createResource(), 48.856667f, 2.350833f);
 		verifyStatus(status);
 		assertEquals(message, status.getText());
 	}

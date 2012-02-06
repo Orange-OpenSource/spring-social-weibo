@@ -17,6 +17,7 @@ package org.springframework.social.weibo.api.impl;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.core.io.Resource;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.StatusContentType;
@@ -191,13 +192,38 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public Status updateStatus(String message, Float latitude, Float longitude) {
+	public Status updateStatus(String message, Resource media) {
+		requireAuthorization();
+		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>(
+				2);
+		request.add("status", message);
+		request.add("pic", media);
+		return restTemplate.postForObject(buildUri("statuses/upload.json"),
+				request, Status.class);
+	}
+
+	@Override
+	public Status updateStatus(String message, Resource media, float latitude,
+			float longitude) {
+		requireAuthorization();
+		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>(
+				2);
+		request.add("status", message);
+		request.add("pic", media);
+		request.add("lat", String.valueOf(latitude));
+		request.add("long", String.valueOf(longitude));
+		return restTemplate.postForObject(buildUri("statuses/upload.json"),
+				request, Status.class);
+	}
+
+	@Override
+	public Status updateStatus(String message, float latitude, float longitude) {
 		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
 				1);
 		request.add("status", message);
-		request.add("lat", latitude.toString());
-		request.add("long", longitude.toString());
+		request.add("lat", String.valueOf(latitude));
+		request.add("long", String.valueOf(longitude));
 		return restTemplate.postForObject(buildUri("statuses/update.json"),
 				request, Status.class);
 	}

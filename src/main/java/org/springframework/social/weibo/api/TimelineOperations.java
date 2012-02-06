@@ -15,7 +15,20 @@
  */
 package org.springframework.social.weibo.api;
 
+import org.springframework.core.io.Resource;
+
 public interface TimelineOperations {
+
+	CursoredList<Status> getFriendsTimeline();
+
+	CursoredList<Status> getFriendsTimeline(int pageSize, int pageNumber);
+
+	CursoredList<Status> getFriendsTimeline(int pageSize, int pageNumber,
+			boolean onlyApplicationStatus);
+
+	CursoredList<Status> getFriendsTimeline(long sinceId, long maxId,
+			int pageSize, int pageNumber, boolean onlyApplicationStatus,
+			StatusContentType statusContentType);
 
 	CursoredList<Status> getHomeTimeline();
 
@@ -35,8 +48,6 @@ public interface TimelineOperations {
 	CursoredList<Status> getPublicTimeline(int pageSize, int pageNumber,
 			boolean onlyApplicationStatus);
 
-	Status updateStatus(String message);
-
 	CursoredList<Status> getUserTimeline(long uid);
 
 	CursoredList<Status> getUserTimeline(long uid, int pageSize, int pageNumber);
@@ -48,17 +59,13 @@ public interface TimelineOperations {
 			int pageSize, int pageNumber, boolean onlyApplicationStatus,
 			StatusContentType statusContentType);
 
-	CursoredList<Status> getFriendsTimeline();
+	Status updateStatus(String message);
 
-	CursoredList<Status> getFriendsTimeline(int pageSize, int pageNumber);
+	Status updateStatus(String message, float latitude, float longitude);
 
-	CursoredList<Status> getFriendsTimeline(int pageSize, int pageNumber,
-			boolean onlyApplicationStatus);
+	Status updateStatus(String message, Resource media);
 
-	CursoredList<Status> getFriendsTimeline(long sinceId, long maxId,
-			int pageSize, int pageNumber, boolean onlyApplicationStatus,
-			StatusContentType statusContentType);
-
-	Status updateStatus(String message, Float latitude, Float longitude);
+	Status updateStatus(String message, Resource media, float latitude,
+			float longitude);
 
 }

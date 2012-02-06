@@ -34,6 +34,7 @@ import org.springframework.web.client.RestTemplate;
 abstract class AbstractWeiboOperations {
 
 	private static final String API_URL_BASE = "https://api.weibo.com/2/";
+	// private static final String API_URL_BASE = "http://localhost:9999/2/";
 	private static final LinkedMultiValueMap<String, String> EMPTY_PARAMETERS = new LinkedMultiValueMap<String, String>();
 
 	private final boolean isAuthorized;
