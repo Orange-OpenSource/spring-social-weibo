@@ -41,6 +41,14 @@ public interface TimelineOperations {
 			int pageSize, int pageNumber, boolean onlyApplicationStatus,
 			StatusContentType statusContentType);
 
+	CursoredList<Status> getMentions();
+
+	CursoredList<Status> getMentions(int pageSize, int pageNumber);
+
+	CursoredList<Status> getMentions(long sinceId, long maxId,
+			int pageSize, int pageNumber, AuthorFilterType authorFilterType,
+			SourceFilterType sourceFilterType, boolean createdInWeibo);
+
 	CursoredList<Status> getPublicTimeline();
 
 	CursoredList<Status> getPublicTimeline(int pageSize, int pageNumber);

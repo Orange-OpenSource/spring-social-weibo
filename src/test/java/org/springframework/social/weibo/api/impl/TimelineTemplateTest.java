@@ -476,4 +476,34 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals("你好", firstStatus.getText());
 	}
 
+	@Test
+	public void testGetMentions() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/mentions.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getMentions();
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetMentionsPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/mentions.json?since_id=0&max_id=0&count=10&page=5&filter_by_author=0&filter_by_source=0&filter_by_type=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("timeline"), responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getMentions(10, 5);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
 }

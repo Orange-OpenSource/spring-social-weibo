@@ -20,6 +20,7 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.io.Resource;
 import org.springframework.social.weibo.api.AuthorFilterType;
 import org.springframework.social.weibo.api.CursoredList;
+import org.springframework.social.weibo.api.SourceFilterType;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.StatusContentType;
 import org.springframework.social.weibo.api.TimelineOperations;
@@ -75,15 +76,15 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 						.queryParam("count", String.valueOf(pageSize))
 						.queryParam("page", String.valueOf(pageNumber))
 						.queryParam("base_app",
-								formatBaseAppValue(onlyApplicationStatus))
+								booleanToString(onlyApplicationStatus))
 						.queryParam("feature",
 								String.valueOf(statusContentType.ordinal()))
 						.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
 
-	private String formatBaseAppValue(boolean onlyApplicationStatus) {
-		return onlyApplicationStatus ? "1" : "0";
+	private static String booleanToString(boolean value) {
+		return value ? "1" : "0";
 	}
 
 	@Override
@@ -130,13 +131,14 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	public CursoredList<Status> getPublicTimeline(int pageSize, int pageNumber,
 			boolean onlyApplicationStatus) {
 		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder("statuses/public_timeline.json")
-						.queryParam("count", String.valueOf(pageSize))
-						.queryParam("page", String.valueOf(pageNumber))
-						.queryParam("base_app",
-								formatBaseAppValue(onlyApplicationStatus))
-						.build(), JsonNode.class);
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/public_timeline.json")
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.queryParam("base_app",
+										booleanToString(onlyApplicationStatus))
+								.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
 
@@ -175,7 +177,7 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 						.queryParam("count", String.valueOf(pageSize))
 						.queryParam("page", String.valueOf(pageNumber))
 						.queryParam("base_app",
-								formatBaseAppValue(onlyApplicationStatus))
+								booleanToString(onlyApplicationStatus))
 						.queryParam("feature",
 								String.valueOf(statusContentType.ordinal()))
 						.build(), JsonNode.class);
@@ -310,6 +312,41 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 								.queryParam("page", String.valueOf(pageNumber))
 								.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "reposts");
+	}
+
+	@Override
+	public CursoredList<Status> getMentions() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/mentions.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
+	public CursoredList<Status> getMentions(int pageSize, int pageNumber) {
+		return getMentions(0, 0, pageSize, pageNumber, AuthorFilterType.ALL,
+				SourceFilterType.ALL, false);
+	}
+
+	@Override
+	public CursoredList<Status> getMentions(long sinceId, long maxId,
+			int pageSize, int pageNumber, AuthorFilterType authorFilterType,
+			SourceFilterType sourceFilterType, boolean createdInWeibo) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("statuses/mentions.json")
+						.queryParam("since_id", String.valueOf(sinceId))
+						.queryParam("max_id", String.valueOf(maxId))
+						.queryParam("count", String.valueOf(pageSize))
+						.queryParam("page", String.valueOf(pageNumber))
+						.queryParam("filter_by_author",
+								String.valueOf(authorFilterType.ordinal()))
+						.queryParam("filter_by_source",
+								String.valueOf(sourceFilterType.ordinal()))
+						.queryParam("filter_by_type",
+								booleanToString(createdInWeibo)).build(),
+				JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
 
 }
