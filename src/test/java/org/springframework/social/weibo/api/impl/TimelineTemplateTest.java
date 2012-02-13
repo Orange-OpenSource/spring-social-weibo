@@ -79,7 +79,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -95,7 +95,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -111,7 +111,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -127,7 +127,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -142,7 +142,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -158,7 +158,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -174,7 +174,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -189,7 +189,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -204,7 +204,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -220,7 +220,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -236,7 +236,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -251,7 +251,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -267,7 +267,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -283,7 +283,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
 	}
 
 	@Test
@@ -299,7 +299,24 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
-		assertEquals("weibo from Beijing", firstStatus.getText());
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testRepostStatus() {
+		String message = "我是法国人";
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/repost.json"))
+				.andExpect(method(POST))
+				.andExpect(
+						body("id=11488058246&status=%E6%88%91%E6%98%AF%E6%B3%95%E5%9B%BD%E4%BA%BA"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("repost"), responseHeaders));
+
+		Status status = timelineTemplate.repostStatus(11488058246L, message);
+		verifyRepost(status);
+		assertEquals(message, status.getText());
 	}
 
 	@Test
@@ -366,6 +383,13 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				2.350833f);
 		verifyStatus(status);
 		assertEquals(message, status.getText());
+	}
+
+	private void verifyRepost(Status status) {
+		verifyStatus(status);
+		Status originalStatus = status.getOriginalStatus();
+		assertEquals(1306231493000L, originalStatus.getCreatedAt().getTime());
+		assertEquals("你好", originalStatus.getText());
 	}
 
 	private void verifyStatus(Status status) {

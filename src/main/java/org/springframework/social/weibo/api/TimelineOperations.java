@@ -61,6 +61,8 @@ public interface TimelineOperations {
 
 	Status deleteStatus(long id);
 
+	Status repostStatus(long id, String message);
+
 	Status updateStatus(String message);
 
 	Status updateStatus(String message, float latitude, float longitude);

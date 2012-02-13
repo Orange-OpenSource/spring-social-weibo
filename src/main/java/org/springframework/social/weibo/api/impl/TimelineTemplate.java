@@ -238,4 +238,14 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 				request, Status.class);
 	}
 
+	@Override
+	public Status repostStatus(long id, String message) {
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("id", String.valueOf(id));
+		request.add("status", message);
+		return restTemplate.postForObject(buildUri("statuses/repost.json"),
+				request, Status.class);
+	}
+
 }
