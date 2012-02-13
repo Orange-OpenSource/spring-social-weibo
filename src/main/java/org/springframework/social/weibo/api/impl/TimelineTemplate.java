@@ -283,4 +283,32 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 		return deserializeCursoredList(dataNode, Status.class, "reposts");
 	}
 
+	@Override
+	public CursoredList<Status> getRepostByMe() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/repost_by_me.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
+	}
+
+	@Override
+	public CursoredList<Status> getRepostByMe(int pageSize, int pageNumber) {
+		return getRepostByMe(0, 0, pageSize, pageNumber);
+	}
+
+	@Override
+	public CursoredList<Status> getRepostByMe(long sinceId, long maxId,
+			int pageSize, int pageNumber) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/repost_by_me.json")
+								.queryParam("since_id", String.valueOf(sinceId))
+								.queryParam("max_id", String.valueOf(maxId))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
+	}
+
 }

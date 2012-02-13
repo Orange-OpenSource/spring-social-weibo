@@ -444,4 +444,36 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals("你好", firstStatus.getText());
 	}
 
+	@Test
+	public void testGetRepostByMe() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/repost_by_me.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("repostTimeline"),
+								responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getRepostByMe();
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetRepostByMePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/repost_by_me.json?since_id=0&max_id=0&count=10&page=5"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("repostTimeline"),
+								responseHeaders));
+		CursoredList<Status> statuses = timelineTemplate.getRepostByMe(10, 5);
+		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
 }
