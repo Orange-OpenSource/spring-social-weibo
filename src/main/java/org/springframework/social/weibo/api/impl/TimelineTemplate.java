@@ -18,6 +18,7 @@ package org.springframework.social.weibo.api.impl;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.io.Resource;
+import org.springframework.social.weibo.api.AuthorFilterType;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.StatusContentType;
@@ -246,6 +247,40 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 		request.add("status", message);
 		return restTemplate.postForObject(buildUri("statuses/repost.json"),
 				request, Status.class);
+	}
+
+	@Override
+	public CursoredList<Status> getRepostTimeline(long id) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/repost_timeline.json", "id", id),
+				JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
+	}
+
+	@Override
+	public CursoredList<Status> getRepostTimeline(long id, int pageSize,
+			int pageNumber) {
+		return getRepostTimeline(id, 0, 0, pageSize, pageNumber,
+				AuthorFilterType.ALL);
+	}
+
+	@Override
+	public CursoredList<Status> getRepostTimeline(long id, long sinceId,
+			long maxId, int pageSize, int pageNumber,
+			AuthorFilterType authorFilterType) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("statuses/repost_timeline.json")
+						.queryParam("id", String.valueOf(id))
+						.queryParam("since_id", String.valueOf(sinceId))
+						.queryParam("max_id", String.valueOf(maxId))
+						.queryParam("count", String.valueOf(pageSize))
+						.queryParam("page", String.valueOf(pageNumber))
+						.queryParam("filter_by_author",
+								String.valueOf(authorFilterType.ordinal()))
+						.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
 	}
 
 }

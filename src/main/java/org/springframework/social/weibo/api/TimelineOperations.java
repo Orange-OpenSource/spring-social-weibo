@@ -48,6 +48,13 @@ public interface TimelineOperations {
 	CursoredList<Status> getPublicTimeline(int pageSize, int pageNumber,
 			boolean onlyApplicationStatus);
 
+	CursoredList<Status> getRepostTimeline(long id);
+
+	CursoredList<Status> getRepostTimeline(long id, int pageSize, int pageNumber);
+
+	CursoredList<Status> getRepostTimeline(long id, long sinceId, long maxId,
+			int pageSize, int pageNumber, AuthorFilterType authorFilterType);
+
 	CursoredList<Status> getUserTimeline(long uid);
 
 	CursoredList<Status> getUserTimeline(long uid, int pageSize, int pageNumber);
