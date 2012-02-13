@@ -241,6 +241,7 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 
 	@Override
 	public Status repostStatus(long id, String message) {
+		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
 				1);
 		request.add("id", String.valueOf(id));
