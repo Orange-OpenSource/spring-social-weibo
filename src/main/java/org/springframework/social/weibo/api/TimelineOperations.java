@@ -19,6 +19,17 @@ import org.springframework.core.io.Resource;
 
 public interface TimelineOperations {
 
+	CursoredList<Status> getBilateralTimeline();
+
+	CursoredList<Status> getBilateralTimeline(int pageSize, int pageNumber);
+
+	CursoredList<Status> getBilateralTimeline(int pageSize, int pageNumber,
+			boolean onlyApplicationStatus);
+
+	CursoredList<Status> getBilateralTimeline(long sinceId, long maxId,
+			int pageSize, int pageNumber, boolean onlyApplicationStatus,
+			StatusContentType statusContentType);
+
 	CursoredList<Status> getFriendsTimeline();
 
 	CursoredList<Status> getFriendsTimeline(int pageSize, int pageNumber);
@@ -45,8 +56,8 @@ public interface TimelineOperations {
 
 	CursoredList<Status> getMentions(int pageSize, int pageNumber);
 
-	CursoredList<Status> getMentions(long sinceId, long maxId,
-			int pageSize, int pageNumber, AuthorFilterType authorFilterType,
+	CursoredList<Status> getMentions(long sinceId, long maxId, int pageSize,
+			int pageNumber, AuthorFilterType authorFilterType,
 			SourceFilterType sourceFilterType, boolean createdInWeibo);
 
 	CursoredList<Status> getPublicTimeline();

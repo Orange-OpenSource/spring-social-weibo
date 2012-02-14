@@ -31,9 +31,71 @@ import org.springframework.web.client.RestTemplate;
 public class TimelineTemplate extends AbstractWeiboOperations implements
 		TimelineOperations {
 
+	private static String booleanToString(boolean value) {
+		return value ? "1" : "0";
+	}
+
 	protected TimelineTemplate(ObjectMapper objectMapper,
 			RestTemplate restTemplate, boolean isAuthorized) {
 		super(objectMapper, restTemplate, isAuthorized);
+	}
+
+	@Override
+	public Status deleteStatus(long id) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("id", String.valueOf(id));
+		return restTemplate.postForObject(buildUri("statuses/destroy.json"),
+				request, Status.class);
+	}
+
+	private CursoredList<Status> fetchStatusList(String url, long sinceId,
+			long maxId, int pageSize, int pageNumber,
+			boolean onlyApplicationStatus, StatusContentType statusContentType) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder(url)
+						.queryParam("since_id", String.valueOf(sinceId))
+						.queryParam("max_id", String.valueOf(maxId))
+						.queryParam("count", String.valueOf(pageSize))
+						.queryParam("page", String.valueOf(pageNumber))
+						.queryParam("base_app",
+								booleanToString(onlyApplicationStatus))
+						.queryParam("feature",
+								String.valueOf(statusContentType.ordinal()))
+						.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
+	public CursoredList<Status> getBilateralTimeline() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/bilateral_timeline.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
+	public CursoredList<Status> getBilateralTimeline(int pageSize,
+			int pageNumber) {
+		return getBilateralTimeline(pageSize, pageNumber, false);
+	}
+
+	@Override
+	public CursoredList<Status> getBilateralTimeline(int pageSize,
+			int pageNumber, boolean onlyApplicationStatus) {
+		return getBilateralTimeline(0, 0, pageSize, pageNumber,
+				onlyApplicationStatus, StatusContentType.ALL);
+	}
+
+	@Override
+	public CursoredList<Status> getBilateralTimeline(long sinceId, long maxId,
+			int pageSize, int pageNumber, boolean onlyApplicationStatus,
+			StatusContentType statusContentType) {
+		return fetchStatusList("statuses/bilateral_timeline.json", sinceId,
+				maxId, pageSize, pageNumber, onlyApplicationStatus,
+				statusContentType);
 	}
 
 	@Override
@@ -65,28 +127,6 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 				statusContentType);
 	}
 
-	private CursoredList<Status> fetchStatusList(String url, long sinceId,
-			long maxId, int pageSize, int pageNumber,
-			boolean onlyApplicationStatus, StatusContentType statusContentType) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder(url)
-						.queryParam("since_id", String.valueOf(sinceId))
-						.queryParam("max_id", String.valueOf(maxId))
-						.queryParam("count", String.valueOf(pageSize))
-						.queryParam("page", String.valueOf(pageNumber))
-						.queryParam("base_app",
-								booleanToString(onlyApplicationStatus))
-						.queryParam("feature",
-								String.valueOf(statusContentType.ordinal()))
-						.build(), JsonNode.class);
-		return deserializeCursoredList(dataNode, Status.class, "statuses");
-	}
-
-	private static String booleanToString(boolean value) {
-		return value ? "1" : "0";
-	}
-
 	@Override
 	public CursoredList<Status> getHomeTimeline() {
 		requireAuthorization();
@@ -116,6 +156,41 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public CursoredList<Status> getMentions() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/mentions.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
+	public CursoredList<Status> getMentions(int pageSize, int pageNumber) {
+		return getMentions(0, 0, pageSize, pageNumber, AuthorFilterType.ALL,
+				SourceFilterType.ALL, false);
+	}
+
+	@Override
+	public CursoredList<Status> getMentions(long sinceId, long maxId,
+			int pageSize, int pageNumber, AuthorFilterType authorFilterType,
+			SourceFilterType sourceFilterType, boolean createdInWeibo) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("statuses/mentions.json")
+						.queryParam("since_id", String.valueOf(sinceId))
+						.queryParam("max_id", String.valueOf(maxId))
+						.queryParam("count", String.valueOf(pageSize))
+						.queryParam("page", String.valueOf(pageNumber))
+						.queryParam("filter_by_author",
+								String.valueOf(authorFilterType.ordinal()))
+						.queryParam("filter_by_source",
+								String.valueOf(sourceFilterType.ordinal()))
+						.queryParam("filter_by_type",
+								booleanToString(createdInWeibo)).build(),
+				JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
 	public CursoredList<Status> getPublicTimeline() {
 		JsonNode dataNode = restTemplate.getForObject(
 				buildUri("statuses/public_timeline.json"), JsonNode.class);
@@ -140,6 +215,68 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 										booleanToString(onlyApplicationStatus))
 								.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
+	public CursoredList<Status> getRepostByMe() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/repost_by_me.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
+	}
+
+	@Override
+	public CursoredList<Status> getRepostByMe(int pageSize, int pageNumber) {
+		return getRepostByMe(0, 0, pageSize, pageNumber);
+	}
+
+	@Override
+	public CursoredList<Status> getRepostByMe(long sinceId, long maxId,
+			int pageSize, int pageNumber) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/repost_by_me.json")
+								.queryParam("since_id", String.valueOf(sinceId))
+								.queryParam("max_id", String.valueOf(maxId))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
+	}
+
+	@Override
+	public CursoredList<Status> getRepostTimeline(long id) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/repost_timeline.json", "id", id),
+				JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
+	}
+
+	@Override
+	public CursoredList<Status> getRepostTimeline(long id, int pageSize,
+			int pageNumber) {
+		return getRepostTimeline(id, 0, 0, pageSize, pageNumber,
+				AuthorFilterType.ALL);
+	}
+
+	@Override
+	public CursoredList<Status> getRepostTimeline(long id, long sinceId,
+			long maxId, int pageSize, int pageNumber,
+			AuthorFilterType authorFilterType) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("statuses/repost_timeline.json")
+						.queryParam("id", String.valueOf(id))
+						.queryParam("since_id", String.valueOf(sinceId))
+						.queryParam("max_id", String.valueOf(maxId))
+						.queryParam("count", String.valueOf(pageSize))
+						.queryParam("page", String.valueOf(pageNumber))
+						.queryParam("filter_by_author",
+								String.valueOf(authorFilterType.ordinal()))
+						.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Status.class, "reposts");
 	}
 
 	@Override
@@ -185,12 +322,13 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public Status deleteStatus(long id) {
+	public Status repostStatus(long id, String message) {
 		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
 				1);
 		request.add("id", String.valueOf(id));
-		return restTemplate.postForObject(buildUri("statuses/destroy.json"),
+		request.add("status", message);
+		return restTemplate.postForObject(buildUri("statuses/repost.json"),
 				request, Status.class);
 	}
 
@@ -200,6 +338,18 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
 				1);
 		request.add("status", message);
+		return restTemplate.postForObject(buildUri("statuses/update.json"),
+				request, Status.class);
+	}
+
+	@Override
+	public Status updateStatus(String message, float latitude, float longitude) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("status", message);
+		request.add("lat", String.valueOf(latitude));
+		request.add("long", String.valueOf(longitude));
 		return restTemplate.postForObject(buildUri("statuses/update.json"),
 				request, Status.class);
 	}
@@ -227,126 +377,6 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 		request.add("long", String.valueOf(longitude));
 		return restTemplate.postForObject(buildUri("statuses/upload.json"),
 				request, Status.class);
-	}
-
-	@Override
-	public Status updateStatus(String message, float latitude, float longitude) {
-		requireAuthorization();
-		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
-				1);
-		request.add("status", message);
-		request.add("lat", String.valueOf(latitude));
-		request.add("long", String.valueOf(longitude));
-		return restTemplate.postForObject(buildUri("statuses/update.json"),
-				request, Status.class);
-	}
-
-	@Override
-	public Status repostStatus(long id, String message) {
-		requireAuthorization();
-		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
-				1);
-		request.add("id", String.valueOf(id));
-		request.add("status", message);
-		return restTemplate.postForObject(buildUri("statuses/repost.json"),
-				request, Status.class);
-	}
-
-	@Override
-	public CursoredList<Status> getRepostTimeline(long id) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				buildUri("statuses/repost_timeline.json", "id", id),
-				JsonNode.class);
-		return deserializeCursoredList(dataNode, Status.class, "reposts");
-	}
-
-	@Override
-	public CursoredList<Status> getRepostTimeline(long id, int pageSize,
-			int pageNumber) {
-		return getRepostTimeline(id, 0, 0, pageSize, pageNumber,
-				AuthorFilterType.ALL);
-	}
-
-	@Override
-	public CursoredList<Status> getRepostTimeline(long id, long sinceId,
-			long maxId, int pageSize, int pageNumber,
-			AuthorFilterType authorFilterType) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder("statuses/repost_timeline.json")
-						.queryParam("id", String.valueOf(id))
-						.queryParam("since_id", String.valueOf(sinceId))
-						.queryParam("max_id", String.valueOf(maxId))
-						.queryParam("count", String.valueOf(pageSize))
-						.queryParam("page", String.valueOf(pageNumber))
-						.queryParam("filter_by_author",
-								String.valueOf(authorFilterType.ordinal()))
-						.build(), JsonNode.class);
-		return deserializeCursoredList(dataNode, Status.class, "reposts");
-	}
-
-	@Override
-	public CursoredList<Status> getRepostByMe() {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				buildUri("statuses/repost_by_me.json"), JsonNode.class);
-		return deserializeCursoredList(dataNode, Status.class, "reposts");
-	}
-
-	@Override
-	public CursoredList<Status> getRepostByMe(int pageSize, int pageNumber) {
-		return getRepostByMe(0, 0, pageSize, pageNumber);
-	}
-
-	@Override
-	public CursoredList<Status> getRepostByMe(long sinceId, long maxId,
-			int pageSize, int pageNumber) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate
-				.getForObject(
-						uriBuilder("statuses/repost_by_me.json")
-								.queryParam("since_id", String.valueOf(sinceId))
-								.queryParam("max_id", String.valueOf(maxId))
-								.queryParam("count", String.valueOf(pageSize))
-								.queryParam("page", String.valueOf(pageNumber))
-								.build(), JsonNode.class);
-		return deserializeCursoredList(dataNode, Status.class, "reposts");
-	}
-
-	@Override
-	public CursoredList<Status> getMentions() {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				buildUri("statuses/mentions.json"), JsonNode.class);
-		return deserializeCursoredList(dataNode, Status.class, "statuses");
-	}
-
-	@Override
-	public CursoredList<Status> getMentions(int pageSize, int pageNumber) {
-		return getMentions(0, 0, pageSize, pageNumber, AuthorFilterType.ALL,
-				SourceFilterType.ALL, false);
-	}
-
-	@Override
-	public CursoredList<Status> getMentions(long sinceId, long maxId,
-			int pageSize, int pageNumber, AuthorFilterType authorFilterType,
-			SourceFilterType sourceFilterType, boolean createdInWeibo) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder("statuses/mentions.json")
-						.queryParam("since_id", String.valueOf(sinceId))
-						.queryParam("max_id", String.valueOf(maxId))
-						.queryParam("count", String.valueOf(pageSize))
-						.queryParam("page", String.valueOf(pageNumber))
-						.queryParam("filter_by_author",
-								String.valueOf(authorFilterType.ordinal()))
-						.queryParam("filter_by_source",
-								String.valueOf(sourceFilterType.ordinal()))
-						.queryParam("filter_by_type",
-								booleanToString(createdInWeibo)).build(),
-				JsonNode.class);
-		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
 
 }
