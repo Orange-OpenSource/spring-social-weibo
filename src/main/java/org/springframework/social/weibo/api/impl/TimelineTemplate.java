@@ -15,6 +15,8 @@
  */
 package org.springframework.social.weibo.api.impl;
 
+import java.util.List;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.core.io.Resource;
@@ -96,6 +98,28 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 		return fetchStatusList("statuses/bilateral_timeline.json", sinceId,
 				maxId, pageSize, pageNumber, onlyApplicationStatus,
 				statusContentType);
+	}
+
+	@Override
+	public List<Status> getDailyHotRepost() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/hot/repost_daily.json"), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
+	}
+
+	@Override
+	public List<Status> getDailyHotRepost(int pageSize,
+			boolean onlyApplicationStatus) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/hot/repost_daily.json")
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("base_app",
+										booleanToString(onlyApplicationStatus))
+								.build(), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
 	}
 
 	@Override
@@ -319,6 +343,28 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 								String.valueOf(statusContentType.ordinal()))
 						.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
+	public List<Status> getWeeklyHotRepost() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/hot/repost_weekly.json"), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
+	}
+
+	@Override
+	public List<Status> getWeeklyHotRepost(int pageSize,
+			boolean onlyApplicationStatus) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/hot/repost_weekly.json")
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("base_app",
+										booleanToString(onlyApplicationStatus))
+								.build(), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
 	}
 
 	@Override

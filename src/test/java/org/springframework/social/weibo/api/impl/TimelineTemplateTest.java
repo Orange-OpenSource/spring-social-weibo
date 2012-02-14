@@ -26,6 +26,8 @@ import static org.springframework.social.test.client.RequestMatchers.method;
 import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
+import java.util.List;
+
 import org.junit.Test;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.core.io.Resource;
@@ -125,6 +127,38 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		CursoredList<Status> statuses = timelineTemplate.getBilateralTimeline(
 				10, 5);
 		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetDailyHotRepost() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/repost_daily.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotReposts"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getDailyHotRepost();
+		assertEquals(2, statuses.size());
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetDailyHotRepostPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/repost_daily.json?count=5&base_app=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotReposts"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getDailyHotRepost(5, false);
+		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
@@ -455,6 +489,38 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L,
 				10, 5);
 		verifyStatusList(statuses);
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetWeeklyHotRepost() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/repost_weekly.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotReposts"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getWeeklyHotRepost();
+		assertEquals(2, statuses.size());
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetWeeklyHotRepostPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/repost_weekly.json?count=5&base_app=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotReposts"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getWeeklyHotRepost(5, false);
+		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
 		verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());

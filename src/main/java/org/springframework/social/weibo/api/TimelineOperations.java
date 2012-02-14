@@ -15,6 +15,8 @@
  */
 package org.springframework.social.weibo.api;
 
+import java.util.List;
+
 import org.springframework.core.io.Resource;
 
 public interface TimelineOperations {
@@ -51,6 +53,14 @@ public interface TimelineOperations {
 	CursoredList<Status> getHomeTimeline(long sinceId, long maxId,
 			int pageSize, int pageNumber, boolean onlyApplicationStatus,
 			StatusContentType statusContentType);
+
+	List<Status> getDailyHotRepost();
+
+	List<Status> getDailyHotRepost(int pageSize, boolean onlyApplicationStatus);
+
+	List<Status> getWeeklyHotRepost();
+
+	List<Status> getWeeklyHotRepost(int pageSize, boolean onlyApplicationStatus);
 
 	CursoredList<Status> getMentions();
 
