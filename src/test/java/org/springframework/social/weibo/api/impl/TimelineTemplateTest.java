@@ -133,13 +133,45 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
+	public void testGetDailyHotComments() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/comments_daily.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotStatuses"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getDailyHotComments();
+		assertEquals(2, statuses.size());
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetDailyHotCommentsPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/comments_daily.json?count=5&base_app=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotStatuses"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getDailyHotComments(5, false);
+		assertEquals(2, statuses.size());
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
 	public void testGetDailyHotRepost() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/statuses/hot/repost_daily.json"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("hotReposts"),
+						withResponse(jsonResource("hotStatuses"),
 								responseHeaders));
 		List<Status> statuses = timelineTemplate.getDailyHotRepost();
 		assertEquals(2, statuses.size());
@@ -155,7 +187,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("hotReposts"),
+						withResponse(jsonResource("hotStatuses"),
 								responseHeaders));
 		List<Status> statuses = timelineTemplate.getDailyHotRepost(5, false);
 		assertEquals(2, statuses.size());
@@ -495,13 +527,45 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
+	public void testGetWeeklyHotComments() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/comments_weekly.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotStatuses"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getWeeklyHotComments();
+		assertEquals(2, statuses.size());
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
+	public void testGetWeeklyHotCommentsPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/hot/comments_weekly.json?count=5&base_app=0"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hotStatuses"),
+								responseHeaders));
+		List<Status> statuses = timelineTemplate.getWeeklyHotComments(5, false);
+		assertEquals(2, statuses.size());
+		Status firstStatus = statuses.iterator().next();
+		verifyStatus(firstStatus);
+		assertEquals("你好", firstStatus.getText());
+	}
+
+	@Test
 	public void testGetWeeklyHotRepost() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/statuses/hot/repost_weekly.json"))
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("hotReposts"),
+						withResponse(jsonResource("hotStatuses"),
 								responseHeaders));
 		List<Status> statuses = timelineTemplate.getWeeklyHotRepost();
 		assertEquals(2, statuses.size());
@@ -517,7 +581,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("hotReposts"),
+						withResponse(jsonResource("hotStatuses"),
 								responseHeaders));
 		List<Status> statuses = timelineTemplate.getWeeklyHotRepost(5, false);
 		assertEquals(2, statuses.size());

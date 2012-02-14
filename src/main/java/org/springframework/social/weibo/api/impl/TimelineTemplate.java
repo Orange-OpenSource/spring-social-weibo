@@ -101,6 +101,28 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public List<Status> getDailyHotComments() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/hot/comments_daily.json"), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
+	}
+
+	@Override
+	public List<Status> getDailyHotComments(int pageSize,
+			boolean onlyApplicationStatus) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/hot/comments_daily.json")
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("base_app",
+										booleanToString(onlyApplicationStatus))
+								.build(), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
+	}
+
+	@Override
 	public List<Status> getDailyHotRepost() {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
@@ -343,6 +365,28 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 								String.valueOf(statusContentType.ordinal()))
 						.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
+	}
+
+	@Override
+	public List<Status> getWeeklyHotComments() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("statuses/hot/comments_weekly.json"), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
+	}
+
+	@Override
+	public List<Status> getWeeklyHotComments(int pageSize,
+			boolean onlyApplicationStatus) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/hot/comments_weekly.json")
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("base_app",
+										booleanToString(onlyApplicationStatus))
+								.build(), JsonNode.class);
+		return deserializeDataList(dataNode, Status.class);
 	}
 
 	@Override

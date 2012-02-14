@@ -21,6 +21,8 @@ import org.springframework.core.io.Resource;
 
 public interface TimelineOperations {
 
+	Status deleteStatus(long id);
+
 	CursoredList<Status> getBilateralTimeline();
 
 	CursoredList<Status> getBilateralTimeline(int pageSize, int pageNumber);
@@ -31,6 +33,14 @@ public interface TimelineOperations {
 	CursoredList<Status> getBilateralTimeline(long sinceId, long maxId,
 			int pageSize, int pageNumber, boolean onlyApplicationStatus,
 			StatusContentType statusContentType);
+
+	List<Status> getDailyHotComments();
+
+	List<Status> getDailyHotComments(int pageSize, boolean onlyApplicationStatus);
+
+	List<Status> getDailyHotRepost();
+
+	List<Status> getDailyHotRepost(int pageSize, boolean onlyApplicationStatus);
 
 	CursoredList<Status> getFriendsTimeline();
 
@@ -53,14 +63,6 @@ public interface TimelineOperations {
 	CursoredList<Status> getHomeTimeline(long sinceId, long maxId,
 			int pageSize, int pageNumber, boolean onlyApplicationStatus,
 			StatusContentType statusContentType);
-
-	List<Status> getDailyHotRepost();
-
-	List<Status> getDailyHotRepost(int pageSize, boolean onlyApplicationStatus);
-
-	List<Status> getWeeklyHotRepost();
-
-	List<Status> getWeeklyHotRepost(int pageSize, boolean onlyApplicationStatus);
 
 	CursoredList<Status> getMentions();
 
@@ -102,7 +104,14 @@ public interface TimelineOperations {
 			int pageSize, int pageNumber, boolean onlyApplicationStatus,
 			StatusContentType statusContentType);
 
-	Status deleteStatus(long id);
+	List<Status> getWeeklyHotComments();
+
+	List<Status> getWeeklyHotComments(int pageSize,
+			boolean onlyApplicationStatus);
+
+	List<Status> getWeeklyHotRepost();
+
+	List<Status> getWeeklyHotRepost(int pageSize, boolean onlyApplicationStatus);
 
 	Status repostStatus(long id, String message);
 
