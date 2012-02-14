@@ -624,6 +624,20 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
+	public void testGetStatus() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/statuses/show.json?id=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("status"), responseHeaders));
+
+		Status status = timelineTemplate.getStatus(1L);
+		verifyStatus(status);
+		assertEquals("你好", status.getText());
+	}
+
+	@Test
 	public void testUpdateStatusUploadPicture() {
 		String message = "你好";
 		mockServer

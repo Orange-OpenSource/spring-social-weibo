@@ -326,6 +326,13 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public Status getStatus(long id) {
+		requireAuthorization();
+		return restTemplate.getForObject(
+				buildUri("statuses/show.json", "id", id), Status.class);
+	}
+
+	@Override
 	public CursoredList<Status> getUserTimeline(long uid) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(

@@ -93,6 +93,8 @@ public interface TimelineOperations {
 	CursoredList<Status> getRepostTimeline(long id, long sinceId, long maxId,
 			int pageSize, int pageNumber, AuthorFilterType authorFilterType);
 
+	Status getStatus(long id);
+
 	CursoredList<Status> getUserTimeline(long uid);
 
 	CursoredList<Status> getUserTimeline(long uid, int pageSize, int pageNumber);
