@@ -45,6 +45,22 @@ public class FriendTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(1, friends.getNextCursor());
 	}
 
+	@Test
+	public void testGetFriendsPagination() {
+		long uid = 123L;
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/friendships/friends.json?uid=123&count=20&cursor=5"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("friends"), responseHeaders));
+		CursoredList<WeiboProfile> friends = friendTemplate.getFriends(uid, 20,
+				5);
+		assertEquals(2, friends.size());
+		assertEquals(650, friends.getTotalNumber());
+		assertEquals(0, friends.getPreviousCursor());
+		assertEquals(1, friends.getNextCursor());
+	}
+
 	@Override
 	public void setUp() {
 		friendTemplate = new FriendTemplate(getObjectMapper(),
