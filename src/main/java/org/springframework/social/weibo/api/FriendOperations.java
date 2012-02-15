@@ -19,6 +19,9 @@ public interface FriendOperations {
 
 	CursoredList<WeiboProfile> getFollowers(long uid);
 
+	CursoredList<WeiboProfile> getFollowers(long uid, int pageSize,
+			int pageNumber);
+
 	CursoredList<WeiboProfile> getFriends(long uid);
 
 	CursoredList<WeiboProfile> getFriends(long uid, int pageSize, int pageNumber);
