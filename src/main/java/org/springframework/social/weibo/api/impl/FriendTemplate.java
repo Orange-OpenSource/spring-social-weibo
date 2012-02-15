@@ -15,6 +15,8 @@
  */
 package org.springframework.social.weibo.api.impl;
 
+import java.util.List;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.CursoredList;
@@ -42,6 +44,26 @@ class FriendTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public List<WeiboProfile> getActiveFollowers(long uid) {
+		requireAuthorization();
+		JsonNode jsonNode = restTemplate.getForObject(
+				buildUri("friendships/followers/active.json", "uid", uid),
+				JsonNode.class);
+		return deserializeDataList(jsonNode, WeiboProfile.class);
+	}
+
+	@Override
+	public List<WeiboProfile> getActiveFollowers(long uid, int pageSize) {
+		requireAuthorization();
+		JsonNode jsonNode = restTemplate.getForObject(
+				uriBuilder("friendships/followers/active.json")
+						.queryParam("uid", String.valueOf(uid))
+						.queryParam("count", String.valueOf(pageSize)).build(),
+				JsonNode.class);
+		return deserializeDataList(jsonNode, WeiboProfile.class);
+	}
+
+	@Override
 	public CursoredList<WeiboProfile> getBilateralFriends(long uid) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
@@ -55,6 +77,33 @@ class FriendTemplate extends AbstractWeiboOperations implements
 			int pageSize, int pageNumber) {
 		return fetchUsersList("friendships/friends/bilateral.json", uid,
 				pageSize, pageNumber);
+	}
+
+	@Override
+	public CursoredList<WeiboProfile> getCommonFriends(long user1Uid,
+			long user2Uid) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("friendships/friends/in_common.json")
+						.queryParam("uid", String.valueOf(user1Uid))
+						.queryParam("suid", String.valueOf(user2Uid)).build(),
+				JsonNode.class);
+		return deserializeCursoredList(dataNode, WeiboProfile.class, "users");
+	}
+
+	@Override
+	public CursoredList<WeiboProfile> getCommonFriends(long user1Uid,
+			long user2Uid, int pageSize, int pageNumber) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("friendships/friends/in_common.json")
+								.queryParam("uid", String.valueOf(user1Uid))
+								.queryParam("suid", String.valueOf(user2Uid))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, WeiboProfile.class, "users");
 	}
 
 	@Override
@@ -87,32 +136,5 @@ class FriendTemplate extends AbstractWeiboOperations implements
 			int pageNumber) {
 		return fetchUsersList("friendships/friends.json", uid, pageSize,
 				pageNumber);
-	}
-
-	@Override
-	public CursoredList<WeiboProfile> getCommonFriends(long user1Uid,
-			long user2Uid) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder("friendships/friends/in_common.json")
-						.queryParam("uid", String.valueOf(user1Uid))
-						.queryParam("suid", String.valueOf(user2Uid)).build(),
-				JsonNode.class);
-		return deserializeCursoredList(dataNode, WeiboProfile.class, "users");
-	}
-
-	@Override
-	public CursoredList<WeiboProfile> getCommonFriends(long user1Uid,
-			long user2Uid, int pageSize, int pageNumber) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate
-				.getForObject(
-						uriBuilder("friendships/friends/in_common.json")
-								.queryParam("uid", String.valueOf(user1Uid))
-								.queryParam("suid", String.valueOf(user2Uid))
-								.queryParam("count", String.valueOf(pageSize))
-								.queryParam("page", String.valueOf(pageNumber))
-								.build(), JsonNode.class);
-		return deserializeCursoredList(dataNode, WeiboProfile.class, "users");
 	}
 }

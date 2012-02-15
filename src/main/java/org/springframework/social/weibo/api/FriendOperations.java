@@ -15,7 +15,13 @@
  */
 package org.springframework.social.weibo.api;
 
+import java.util.List;
+
 public interface FriendOperations {
+
+	List<WeiboProfile> getActiveFollowers(long uid);
+
+	List<WeiboProfile> getActiveFollowers(long uid, int pageSize);
 
 	CursoredList<WeiboProfile> getBilateralFriends(long uid);
 
