@@ -37,7 +37,7 @@ public class FriendTemplateTest extends AbstractWeiboOperationsTest {
 						+ uid))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("friends"), responseHeaders));
+						withResponse(jsonResource("users"), responseHeaders));
 		CursoredList<WeiboProfile> friends = friendTemplate.getFriends(uid);
 		assertEquals(2, friends.size());
 		assertEquals(650, friends.getTotalNumber());
@@ -52,7 +52,7 @@ public class FriendTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/friendships/friends.json?uid=123&count=20&cursor=5"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("friends"), responseHeaders));
+						withResponse(jsonResource("users"), responseHeaders));
 		CursoredList<WeiboProfile> friends = friendTemplate.getFriends(uid, 20,
 				5);
 		assertEquals(2, friends.size());
@@ -65,6 +65,23 @@ public class FriendTemplateTest extends AbstractWeiboOperationsTest {
 	public void setUp() {
 		friendTemplate = new FriendTemplate(getObjectMapper(),
 				getRestTemplate(), true);
+	}
+
+	@Test
+	public void testGetFollowers() {
+		long uid = 123L;
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/friendships/followers.json?uid="
+						+ uid))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("users"), responseHeaders));
+		CursoredList<WeiboProfile> friends = friendTemplate.getFollowers(uid);
+		assertEquals(2, friends.size());
+		assertEquals(650, friends.getTotalNumber());
+		assertEquals(0, friends.getPreviousCursor());
+		assertEquals(1, friends.getNextCursor());
+
 	}
 
 }
