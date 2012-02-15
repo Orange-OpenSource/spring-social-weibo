@@ -42,6 +42,22 @@ class FriendTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public CursoredList<WeiboProfile> getBilateralFriends(long uid) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("friendships/friends/bilateral.json", "uid", uid),
+				JsonNode.class);
+		return deserializeCursoredList(dataNode, WeiboProfile.class, "users");
+	}
+
+	@Override
+	public CursoredList<WeiboProfile> getBilateralFriends(long uid,
+			int pageSize, int pageNumber) {
+		return fetchUsersList("friendships/friends/bilateral.json", uid,
+				pageSize, pageNumber);
+	}
+
+	@Override
 	public CursoredList<WeiboProfile> getFollowers(long uid) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
