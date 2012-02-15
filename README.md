@@ -6,8 +6,8 @@ Currently, only basic operations are supported:
 * get profile by id or username
 * get statuses: user timeline, home timeline, public timeline
 * update status
-* get friends (pagination is not supported)
-* get followers (pagination is not supported)
+* get friends
+* get followers
 
 If you are using this project, you should probably consider to read the [term of use of Weibo](http://open.weibo.com/wiki/%E5%BA%94%E7%94%A8%E5%BC%80%E5%8F%91%E8%80%85%E5%8D%8F%E8%AE%AE)
 
