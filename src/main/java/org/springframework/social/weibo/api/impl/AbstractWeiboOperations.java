@@ -77,8 +77,14 @@ abstract class AbstractWeiboOperations {
 	protected <T> CursoredList<T> deserializeCursoredList(JsonNode jsonNode,
 			final Class<T> elementType, String dataFieldName) {
 		CursoredList<T> result = new CursoredList<T>();
-		result.setPreviousCursor(jsonNode.get("previous_cursor").getLongValue());
-		result.setNextCursor(jsonNode.get("next_cursor").getLongValue());
+		JsonNode previousCursorNode = jsonNode.get("previous_cursor");
+		if (previousCursorNode != null) {
+			result.setPreviousCursor(previousCursorNode.getLongValue());
+		}
+		JsonNode nextCursorNode = jsonNode.get("next_cursor");
+		if (nextCursorNode != null) {
+			result.setNextCursor(nextCursorNode.getLongValue());
+		}
 		result.setTotalNumber(jsonNode.get("total_number").getIntValue());
 		result.addAll(deserializeDataList(jsonNode.get(dataFieldName),
 				elementType));
