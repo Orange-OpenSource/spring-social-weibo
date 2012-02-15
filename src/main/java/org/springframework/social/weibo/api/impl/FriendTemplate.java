@@ -88,4 +88,31 @@ class FriendTemplate extends AbstractWeiboOperations implements
 		return fetchUsersList("friendships/friends.json", uid, pageSize,
 				pageNumber);
 	}
+
+	@Override
+	public CursoredList<WeiboProfile> getCommonFriends(long user1Uid,
+			long user2Uid) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("friendships/friends/in_common.json")
+						.queryParam("uid", String.valueOf(user1Uid))
+						.queryParam("suid", String.valueOf(user2Uid)).build(),
+				JsonNode.class);
+		return deserializeCursoredList(dataNode, WeiboProfile.class, "users");
+	}
+
+	@Override
+	public CursoredList<WeiboProfile> getCommonFriends(long user1Uid,
+			long user2Uid, int pageSize, int pageNumber) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("friendships/friends/in_common.json")
+								.queryParam("uid", String.valueOf(user1Uid))
+								.queryParam("suid", String.valueOf(user2Uid))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, WeiboProfile.class, "users");
+	}
 }
