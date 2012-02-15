@@ -28,7 +28,7 @@ class UserTemplate extends AbstractWeiboOperations implements UserOperations {
 	}
 
 	@Override
-	public WeiboProfile getUserProfileById(String uid) {
+	public WeiboProfile getUserProfileById(long uid) {
 		requireAuthorization();
 		return restTemplate.getForObject(
 				buildUri("users/show.json", "uid", uid), WeiboProfile.class);

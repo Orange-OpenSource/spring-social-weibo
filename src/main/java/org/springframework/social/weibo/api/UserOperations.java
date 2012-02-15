@@ -17,7 +17,7 @@ package org.springframework.social.weibo.api;
 
 public interface UserOperations {
 
-	WeiboProfile getUserProfileById(String Uid);
+	WeiboProfile getUserProfileById(long Uid);
 
 	WeiboProfile getUserProfileByScreenName(String screenName);
 

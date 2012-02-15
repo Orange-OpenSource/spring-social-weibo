@@ -17,6 +17,6 @@ package org.springframework.social.weibo.api;
 
 public interface AccountOperations {
 
-	String getUid();
+	long getUid();
 
 }

@@ -30,10 +30,10 @@ class AccountTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public String getUid() {
+	public long getUid() {
 		requireAuthorization();
-		return restTemplate
+		return Long.valueOf(restTemplate
 				.getForObject(buildUri("account/get_uid.json"), Map.class)
-				.get("uid").toString();
+				.get("uid").toString());
 	}
 }

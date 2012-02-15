@@ -31,7 +31,7 @@ class FriendTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public CursoredList<WeiboProfile> getFriends(String uid) {
+	public CursoredList<WeiboProfile> getFriends(long uid) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
 				buildUri("friendships/friends.json", "uid", uid),
@@ -40,7 +40,7 @@ class FriendTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public CursoredList<WeiboProfile> getFollowers(String uid) {
+	public CursoredList<WeiboProfile> getFollowers(long uid) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
 				buildUri("friendships/followers.json", "uid", uid),

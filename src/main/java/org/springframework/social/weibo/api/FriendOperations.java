@@ -17,8 +17,8 @@ package org.springframework.social.weibo.api;
 
 public interface FriendOperations {
 
-	CursoredList<WeiboProfile> getFollowers(String uid);
+	CursoredList<WeiboProfile> getFollowers(long uid);
 
-	CursoredList<WeiboProfile> getFriends(String uid);
+	CursoredList<WeiboProfile> getFriends(long uid);
 
 }
