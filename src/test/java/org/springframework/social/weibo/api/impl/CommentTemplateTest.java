@@ -23,8 +23,10 @@ import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
 import org.junit.Test;
+import org.springframework.social.weibo.api.AuthorFilterType;
 import org.springframework.social.weibo.api.Comment;
 import org.springframework.social.weibo.api.CursoredList;
+import org.springframework.social.weibo.api.SourceFilterType;
 
 public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 
@@ -103,6 +105,52 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals("我喜欢你做的", comment.getText());
 		assertNotNull(comment.getUser());
 		assertNotNull(comment.getStatus());
+	}
+
+	@Test
+	public void testGetCommentsToMe() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsToMe();
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetCommentsToMePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=0&filter_by_source=0"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsToMe(50, 5);
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetCommentsToMePaginationFiltered() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=1&filter_by_source=0"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsToMe(50, 5,
+				AuthorFilterType.FRIENDS, SourceFilterType.ALL);
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
 	}
 
 }
