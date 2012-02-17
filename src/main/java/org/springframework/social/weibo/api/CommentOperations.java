@@ -27,4 +27,14 @@ public interface CommentOperations {
 	CursoredList<Comment> getComments(long id, long sinceId, long maxId,
 			int pageSize, int pageNumber, AuthorFilterType authorFilterType);
 
+	CursoredList<Comment> getCommentsByMe();
+
+	CursoredList<Comment> getCommentsByMe(int pageSize, int pageNumber);
+
+	CursoredList<Comment> getCommentsByMe(int pageSize, int pageNumber,
+			SourceFilterType sourceFilterType);
+
+	CursoredList<Comment> getCommentsByMe(long sinceId, long maxId, int pageSize,
+			int pageNumber, SourceFilterType sourceFilterType);
+
 }

@@ -30,6 +30,12 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 
 	private CommentTemplate commentTemplate;
 
+	@Override
+	public void setUp() {
+		commentTemplate = new CommentTemplate(getObjectMapper(),
+				getRestTemplate(), true);
+	}
+
 	@Test
 	public void testGetComments() {
 		mockServer
@@ -45,12 +51,34 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(10, comments.getNextCursor());
 	}
 
-	private void verifyComment(Comment comment) {
-		assertEquals(12438492184L, comment.getId());
-		assertEquals(1306860625000L, comment.getCreatedAt().getTime());
-		assertEquals("我喜欢你做的", comment.getText());
-		assertNotNull(comment.getUser());
-		assertNotNull(comment.getStatus());
+	@Test
+	public void testGetCommentsByMe() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsByMe();
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetCommentsByMePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_source=0"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsByMe(50, 5);
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
 	}
 
 	@Test
@@ -69,10 +97,12 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(10, comments.getNextCursor());
 	}
 
-	@Override
-	public void setUp() {
-		commentTemplate = new CommentTemplate(getObjectMapper(),
-				getRestTemplate(), true);
+	private void verifyComment(Comment comment) {
+		assertEquals(12438492184L, comment.getId());
+		assertEquals(1306860625000L, comment.getCreatedAt().getTime());
+		assertEquals("我喜欢你做的", comment.getText());
+		assertNotNull(comment.getUser());
+		assertNotNull(comment.getStatus());
 	}
 
 }

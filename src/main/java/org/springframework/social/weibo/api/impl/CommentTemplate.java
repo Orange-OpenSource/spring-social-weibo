@@ -21,6 +21,7 @@ import org.springframework.social.weibo.api.AuthorFilterType;
 import org.springframework.social.weibo.api.Comment;
 import org.springframework.social.weibo.api.CommentOperations;
 import org.springframework.social.weibo.api.CursoredList;
+import org.springframework.social.weibo.api.SourceFilterType;
 import org.springframework.web.client.RestTemplate;
 
 class CommentTemplate extends AbstractWeiboOperations implements
@@ -54,16 +55,9 @@ class CommentTemplate extends AbstractWeiboOperations implements
 	@Override
 	public CursoredList<Comment> getComments(long id, long sinceId, long maxId,
 			int pageSize, int pageNumber, AuthorFilterType authorFilterType) {
-		return fetchCommentList("comments/show.json", id, sinceId, maxId,
-				pageSize, pageNumber, authorFilterType);
-	}
-
-	private CursoredList<Comment> fetchCommentList(String url, long id,
-			long sinceId, long maxId, int pageSize, int pageNumber,
-			AuthorFilterType authorFilterType) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder(url)
+				uriBuilder("comments/show.json")
 						.queryParam("id", String.valueOf(id))
 						.queryParam("since_id", String.valueOf(sinceId))
 						.queryParam("max_id", String.valueOf(maxId))
@@ -71,6 +65,41 @@ class CommentTemplate extends AbstractWeiboOperations implements
 						.queryParam("page", String.valueOf(pageNumber))
 						.queryParam("filter_by_author",
 								String.valueOf(authorFilterType.ordinal()))
+						.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsByMe() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("comments/by_me.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsByMe(int pageSize, int pageNumber) {
+		return getCommentsByMe(pageSize, pageNumber, SourceFilterType.ALL);
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsByMe(int pageSize, int pageNumber,
+			SourceFilterType sourceFilterType) {
+		return getCommentsByMe(0, 0, pageSize, pageNumber, sourceFilterType);
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsByMe(long sinceId, long maxId,
+			int pageSize, int pageNumber, SourceFilterType sourceFilterType) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("comments/by_me.json")
+						.queryParam("since_id", String.valueOf(sinceId))
+						.queryParam("max_id", String.valueOf(maxId))
+						.queryParam("count", String.valueOf(pageSize))
+						.queryParam("page", String.valueOf(pageNumber))
+						.queryParam("filter_by_source",
+								String.valueOf(sourceFilterType.ordinal()))
 						.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Comment.class, "comments");
 	}
