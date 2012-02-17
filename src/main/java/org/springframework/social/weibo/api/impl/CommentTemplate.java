@@ -175,4 +175,46 @@ class CommentTemplate extends AbstractWeiboOperations implements
 								.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Comment.class, "comments");
 	}
+
+	@Override
+	public CursoredList<Comment> getMentioningComments() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("comments/mentions.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
+
+	@Override
+	public CursoredList<Comment> getMentioningComments(int pageSize,
+			int pageNumber) {
+		return getMentioningComments(pageSize, pageNumber,
+				AuthorFilterType.ALL, SourceFilterType.ALL);
+	}
+
+	@Override
+	public CursoredList<Comment> getMentioningComments(int pageSize,
+			int pageNumber, AuthorFilterType authorFilterType,
+			SourceFilterType sourceFilterType) {
+		return getMentioningComments(0, 0, pageSize, pageNumber,
+				authorFilterType, sourceFilterType);
+	}
+
+	@Override
+	public CursoredList<Comment> getMentioningComments(long sinceId,
+			long maxId, int pageSize, int pageNumber,
+			AuthorFilterType authorFilterType, SourceFilterType sourceFilterType) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				uriBuilder("comments/mentions.json")
+						.queryParam("since_id", String.valueOf(sinceId))
+						.queryParam("max_id", String.valueOf(maxId))
+						.queryParam("count", String.valueOf(pageSize))
+						.queryParam("page", String.valueOf(pageNumber))
+						.queryParam("filter_by_author",
+								String.valueOf(authorFilterType.ordinal()))
+						.queryParam("filter_by_source",
+								String.valueOf(sourceFilterType.ordinal()))
+						.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
 }

@@ -177,6 +177,54 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(10, comments.getNextCursor());
 	}
 
+	@Test
+	public void testGetMentioningComments() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/mentions.json"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate
+				.getMentioningComments();
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetMentioningCommentsPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/mentions.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=0&filter_by_source=0"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getMentioningComments(
+				50, 5);
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetMentioningCommentsPaginationFiltered() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/mentions.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=1&filter_by_source=0"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getMentioningComments(
+				50, 5, AuthorFilterType.FRIENDS, SourceFilterType.ALL);
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
 	private void verifyComment(Comment comment) {
 		assertEquals(12438492184L, comment.getId());
 		assertEquals(1306860625000L, comment.getCreatedAt().getTime());
