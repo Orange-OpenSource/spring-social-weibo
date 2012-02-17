@@ -39,7 +39,37 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsOnStatusOnStatusOnStatusOnStatus() {
+	public void testGetCommentsByMe() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsByMe();
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetCommentsByMePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_source=0"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsByMe(50, 5);
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetCommentsOnStatus() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/show.json?id=123"))
 				.andExpect(method(GET))
@@ -55,37 +85,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusByMe() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json"))
-				.andExpect(method(GET))
-				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
-		CursoredList<Comment> comments = commentTemplate.getCommentsByMe();
-		verifyComment(comments.iterator().next());
-		assertEquals(2, comments.size());
-		assertEquals(7, comments.getTotalNumber());
-		assertEquals(0, comments.getPreviousCursor());
-		assertEquals(10, comments.getNextCursor());
-	}
-
-	@Test
-	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusByMePagination() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_source=0"))
-				.andExpect(method(GET))
-				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
-		CursoredList<Comment> comments = commentTemplate.getCommentsByMe(50, 5);
-		verifyComment(comments.iterator().next());
-		assertEquals(2, comments.size());
-		assertEquals(7, comments.getTotalNumber());
-		assertEquals(0, comments.getPreviousCursor());
-		assertEquals(10, comments.getNextCursor());
-	}
-
-	@Test
-	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusPagination() {
+	public void testGetCommentsOnStatusPagination() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/show.json?id=123&since_id=0&max_id=0&count=50&page=5&filter_by_author=0"))
 				.andExpect(method(GET))
@@ -100,16 +100,39 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(10, comments.getNextCursor());
 	}
 
-	private void verifyComment(Comment comment) {
-		assertEquals(12438492184L, comment.getId());
-		assertEquals(1306860625000L, comment.getCreatedAt().getTime());
-		assertEquals("我喜欢你做的", comment.getText());
-		assertNotNull(comment.getUser());
-		assertNotNull(comment.getStatus());
+	@Test
+	public void testGetCommentsTimeline() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/timeline.json"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsTimeline();
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
 	}
 
 	@Test
-	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusToMe() {
+	public void testGetCommentsTimelinePagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/timeline.json?since_id=0&max_id=0&count=50&page=5"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		CursoredList<Comment> comments = commentTemplate.getCommentsTimeline(
+				50, 5);
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+		assertEquals(7, comments.getTotalNumber());
+		assertEquals(0, comments.getPreviousCursor());
+		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetCommentsToMe() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json"))
 				.andExpect(method(GET))
@@ -124,7 +147,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusToMePagination() {
+	public void testGetCommentsToMePagination() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=0&filter_by_source=0"))
 				.andExpect(method(GET))
@@ -139,7 +162,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusToMePaginationFiltered() {
+	public void testGetCommentsToMePaginationFiltered() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=1&filter_by_source=0"))
 				.andExpect(method(GET))
@@ -152,6 +175,14 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(7, comments.getTotalNumber());
 		assertEquals(0, comments.getPreviousCursor());
 		assertEquals(10, comments.getNextCursor());
+	}
+
+	private void verifyComment(Comment comment) {
+		assertEquals(12438492184L, comment.getId());
+		assertEquals(1306860625000L, comment.getCreatedAt().getTime());
+		assertEquals("我喜欢你做的", comment.getText());
+		assertNotNull(comment.getUser());
+		assertNotNull(comment.getStatus());
 	}
 
 }

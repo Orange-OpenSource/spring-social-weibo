@@ -29,13 +29,22 @@ public interface CommentOperations {
 
 	CursoredList<Comment> getCommentsOnStatus(long id);
 
-	CursoredList<Comment> getCommentsOnStatus(long id, int pageSize, int pageNumber);
+	CursoredList<Comment> getCommentsOnStatus(long id, int pageSize,
+			int pageNumber);
 
-	CursoredList<Comment> getCommentsOnStatus(long id, int pageSize, int pageNumber,
+	CursoredList<Comment> getCommentsOnStatus(long id, int pageSize,
+			int pageNumber, AuthorFilterType authorFilterType);
+
+	CursoredList<Comment> getCommentsOnStatus(long id, long sinceId,
+			long maxId, int pageSize, int pageNumber,
 			AuthorFilterType authorFilterType);
 
-	CursoredList<Comment> getCommentsOnStatus(long id, long sinceId, long maxId,
-			int pageSize, int pageNumber, AuthorFilterType authorFilterType);
+	CursoredList<Comment> getCommentsTimeline();
+
+	CursoredList<Comment> getCommentsTimeline(int pageSize, int pageNumber);
+
+	CursoredList<Comment> getCommentsTimeline(long sinceId, long maxId,
+			int pageSize, int pageNumber);
 
 	CursoredList<Comment> getCommentsToMe();
 

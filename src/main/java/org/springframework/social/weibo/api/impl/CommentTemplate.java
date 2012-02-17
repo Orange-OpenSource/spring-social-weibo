@@ -78,18 +78,21 @@ class CommentTemplate extends AbstractWeiboOperations implements
 	@Override
 	public CursoredList<Comment> getCommentsOnStatus(long id, int pageSize,
 			int pageNumber) {
-		return getCommentsOnStatus(id, pageSize, pageNumber, AuthorFilterType.ALL);
+		return getCommentsOnStatus(id, pageSize, pageNumber,
+				AuthorFilterType.ALL);
 	}
 
 	@Override
 	public CursoredList<Comment> getCommentsOnStatus(long id, int pageSize,
 			int pageNumber, AuthorFilterType authorFilterType) {
-		return getCommentsOnStatus(id, 0, 0, pageSize, pageNumber, authorFilterType);
+		return getCommentsOnStatus(id, 0, 0, pageSize, pageNumber,
+				authorFilterType);
 	}
 
 	@Override
-	public CursoredList<Comment> getCommentsOnStatus(long id, long sinceId, long maxId,
-			int pageSize, int pageNumber, AuthorFilterType authorFilterType) {
+	public CursoredList<Comment> getCommentsOnStatus(long id, long sinceId,
+			long maxId, int pageSize, int pageNumber,
+			AuthorFilterType authorFilterType) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
 				uriBuilder("comments/show.json")
@@ -141,6 +144,35 @@ class CommentTemplate extends AbstractWeiboOperations implements
 						.queryParam("filter_by_source",
 								String.valueOf(sourceFilterType.ordinal()))
 						.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsTimeline() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("comments/timeline.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsTimeline(int pageSize,
+			int pageNumber) {
+		return getCommentsTimeline(0, 0, pageSize, pageNumber);
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsTimeline(long sinceId, long maxId,
+			int pageSize, int pageNumber) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("comments/timeline.json")
+								.queryParam("since_id", String.valueOf(sinceId))
+								.queryParam("max_id", String.valueOf(maxId))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Comment.class, "comments");
 	}
 }
