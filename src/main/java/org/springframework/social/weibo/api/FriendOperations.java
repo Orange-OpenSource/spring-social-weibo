@@ -21,6 +21,8 @@ public interface FriendOperations {
 
 	WeiboProfile createFriend(long uid);
 
+	WeiboProfile deleteFriend(long uid);
+
 	List<WeiboProfile> getActiveFollowers(long uid);
 
 	List<WeiboProfile> getActiveFollowers(long uid, int pageSize);

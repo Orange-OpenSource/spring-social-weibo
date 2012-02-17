@@ -34,6 +34,25 @@ class FriendTemplate extends AbstractWeiboOperations implements
 		super(objectMapper, restTemplate, isAuthorized);
 	}
 
+	@Override
+	public WeiboProfile createFriend(long uid) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("uid", String.valueOf(uid));
+		return restTemplate.postForObject(buildUri("friendships/create.json"),
+				request, WeiboProfile.class);
+	}
+
+	@Override
+	public WeiboProfile deleteFriend(long uid) {
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("uid", String.valueOf(uid));
+		return restTemplate.postForObject(buildUri("friendships/destroy.json"),
+				request, WeiboProfile.class);
+	}
+
 	private CursoredList<WeiboProfile> fetchUsersList(String url, long uid,
 			int pageSize, int pageNumber) {
 		requireAuthorization();
@@ -138,15 +157,5 @@ class FriendTemplate extends AbstractWeiboOperations implements
 			int pageNumber) {
 		return fetchUsersList("friendships/friends.json", uid, pageSize,
 				pageNumber);
-	}
-
-	@Override
-	public WeiboProfile createFriend(long uid) {
-		requireAuthorization();
-		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
-				1);
-		request.add("uid", String.valueOf(uid));
-		return restTemplate.postForObject(buildUri("friendships/create.json"),
-				request, WeiboProfile.class);
 	}
 }

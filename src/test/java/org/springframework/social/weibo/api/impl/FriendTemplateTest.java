@@ -215,4 +215,18 @@ public class FriendTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(1, friends.getNextCursor());
 	}
 
+	@Test
+	public void testDeleteFriend() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/friendships/destroy.json"))
+				.andExpect(method(POST))
+				.andExpect(body("uid=1"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("profile"), responseHeaders));
+
+		WeiboProfile user = friendTemplate.deleteFriend(1L);
+		verifyWeiboProfile(user);
+	}
+
 }
