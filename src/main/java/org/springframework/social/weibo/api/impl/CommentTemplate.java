@@ -33,7 +33,7 @@ class CommentTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public CursoredList<Comment> getComments(long id) {
+	public CursoredList<Comment> getCommentsOnStatus(long id) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
 				buildUri("comments/show.json", "id", id), JsonNode.class);
@@ -41,19 +41,19 @@ class CommentTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public CursoredList<Comment> getComments(long id, int pageSize,
+	public CursoredList<Comment> getCommentsOnStatus(long id, int pageSize,
 			int pageNumber) {
-		return getComments(id, pageSize, pageNumber, AuthorFilterType.ALL);
+		return getCommentsOnStatus(id, pageSize, pageNumber, AuthorFilterType.ALL);
 	}
 
 	@Override
-	public CursoredList<Comment> getComments(long id, int pageSize,
+	public CursoredList<Comment> getCommentsOnStatus(long id, int pageSize,
 			int pageNumber, AuthorFilterType authorFilterType) {
-		return getComments(id, 0, 0, pageSize, pageNumber, authorFilterType);
+		return getCommentsOnStatus(id, 0, 0, pageSize, pageNumber, authorFilterType);
 	}
 
 	@Override
-	public CursoredList<Comment> getComments(long id, long sinceId, long maxId,
+	public CursoredList<Comment> getCommentsOnStatus(long id, long sinceId, long maxId,
 			int pageSize, int pageNumber, AuthorFilterType authorFilterType) {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(

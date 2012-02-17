@@ -39,13 +39,14 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetComments() {
+	public void testGetCommentsOnStatusOnStatusOnStatusOnStatus() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/show.json?id=123"))
 				.andExpect(method(GET))
 				.andRespond(
 						withResponse(jsonResource("comments"), responseHeaders));
-		CursoredList<Comment> comments = commentTemplate.getComments(123L);
+		CursoredList<Comment> comments = commentTemplate
+				.getCommentsOnStatus(123L);
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
 		assertEquals(7, comments.getTotalNumber());
@@ -54,7 +55,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsByMe() {
+	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusByMe() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json"))
 				.andExpect(method(GET))
@@ -69,7 +70,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsByMePagination() {
+	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusByMePagination() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_source=0"))
 				.andExpect(method(GET))
@@ -84,14 +85,14 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsPagination() {
+	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusPagination() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/show.json?id=123&since_id=0&max_id=0&count=50&page=5&filter_by_author=0"))
 				.andExpect(method(GET))
 				.andRespond(
 						withResponse(jsonResource("comments"), responseHeaders));
-		CursoredList<Comment> comments = commentTemplate.getComments(123L, 50,
-				5);
+		CursoredList<Comment> comments = commentTemplate.getCommentsOnStatus(
+				123L, 50, 5);
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
 		assertEquals(7, comments.getTotalNumber());
@@ -108,7 +109,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsToMe() {
+	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusToMe() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json"))
 				.andExpect(method(GET))
@@ -123,7 +124,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsToMePagination() {
+	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusToMePagination() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=0&filter_by_source=0"))
 				.andExpect(method(GET))
@@ -138,7 +139,7 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
-	public void testGetCommentsToMePaginationFiltered() {
+	public void testGetCommentsOnStatusOnStatusOnStatusOnStatusToMePaginationFiltered() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=1&filter_by_source=0"))
 				.andExpect(method(GET))

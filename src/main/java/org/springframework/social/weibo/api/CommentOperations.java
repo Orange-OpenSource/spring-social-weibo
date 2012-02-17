@@ -17,14 +17,14 @@ package org.springframework.social.weibo.api;
 
 public interface CommentOperations {
 
-	CursoredList<Comment> getComments(long id);
+	CursoredList<Comment> getCommentsOnStatus(long id);
 
-	CursoredList<Comment> getComments(long id, int pageSize, int pageNumber);
+	CursoredList<Comment> getCommentsOnStatus(long id, int pageSize, int pageNumber);
 
-	CursoredList<Comment> getComments(long id, int pageSize, int pageNumber,
+	CursoredList<Comment> getCommentsOnStatus(long id, int pageSize, int pageNumber,
 			AuthorFilterType authorFilterType);
 
-	CursoredList<Comment> getComments(long id, long sinceId, long maxId,
+	CursoredList<Comment> getCommentsOnStatus(long id, long sinceId, long maxId,
 			int pageSize, int pageNumber, AuthorFilterType authorFilterType);
 
 	CursoredList<Comment> getCommentsByMe();
