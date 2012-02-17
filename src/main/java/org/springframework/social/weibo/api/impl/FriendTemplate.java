@@ -22,6 +22,8 @@ import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.FriendOperations;
 import org.springframework.social.weibo.api.WeiboProfile;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 class FriendTemplate extends AbstractWeiboOperations implements
@@ -136,5 +138,15 @@ class FriendTemplate extends AbstractWeiboOperations implements
 			int pageNumber) {
 		return fetchUsersList("friendships/friends.json", uid, pageSize,
 				pageNumber);
+	}
+
+	@Override
+	public WeiboProfile createFriend(long uid) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("uid", String.valueOf(uid));
+		return restTemplate.postForObject(buildUri("friendships/create.json"),
+				request, WeiboProfile.class);
 	}
 }

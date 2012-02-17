@@ -19,6 +19,8 @@ import java.util.List;
 
 public interface FriendOperations {
 
+	WeiboProfile createFriend(long uid);
+
 	List<WeiboProfile> getActiveFollowers(long uid);
 
 	List<WeiboProfile> getActiveFollowers(long uid, int pageSize);
