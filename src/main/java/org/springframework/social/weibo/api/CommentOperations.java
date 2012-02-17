@@ -15,16 +15,16 @@
  */
 package org.springframework.social.weibo.api;
 
-public interface Weibo {
+public interface CommentOperations {
 
-	AccountOperations accountOperations();
+	CursoredList<Comment> getComments(long id);
 
-	CommentOperations commentOperations();
+	CursoredList<Comment> getComments(long id, int pageSize, int pageNumber);
 
-	FriendOperations friendOperations();
+	CursoredList<Comment> getComments(long id, int pageSize, int pageNumber,
+			AuthorFilterType authorFilterType);
 
-	TimelineOperations timelineOperations();
-
-	UserOperations userOperations();
+	CursoredList<Comment> getComments(long id, long sinceId, long maxId,
+			int pageSize, int pageNumber, AuthorFilterType authorFilterType);
 
 }

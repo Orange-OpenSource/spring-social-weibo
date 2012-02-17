@@ -31,6 +31,7 @@ import org.springframework.social.oauth2.AbstractOAuth2ApiBinding;
 import org.springframework.social.oauth2.OAuth2Version;
 import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.social.weibo.api.AccountOperations;
+import org.springframework.social.weibo.api.CommentOperations;
 import org.springframework.social.weibo.api.FriendOperations;
 import org.springframework.social.weibo.api.TimelineOperations;
 import org.springframework.social.weibo.api.UserOperations;
@@ -41,6 +42,8 @@ import org.springframework.web.client.RestTemplate;
 public class WeiboTemplate extends AbstractOAuth2ApiBinding implements Weibo {
 
 	private AccountOperations accountOperations;
+
+	private CommentOperations commentOperations;
 
 	private UserOperations userOperations;
 
@@ -112,6 +115,8 @@ public class WeiboTemplate extends AbstractOAuth2ApiBinding implements Weibo {
 				getRestTemplate(), isAuthorized());
 		this.friendOperations = new FriendTemplate(objectMapper,
 				getRestTemplate(), isAuthorized());
+		this.commentOperations = new CommentTemplate(objectMapper,
+				getRestTemplate(), isAuthorized());
 	}
 
 	@Override
@@ -127,6 +132,11 @@ public class WeiboTemplate extends AbstractOAuth2ApiBinding implements Weibo {
 	@Override
 	public AccountOperations accountOperations() {
 		return accountOperations;
+	}
+
+	@Override
+	public CommentOperations commentOperations() {
+		return commentOperations;
 	}
 
 	@Override

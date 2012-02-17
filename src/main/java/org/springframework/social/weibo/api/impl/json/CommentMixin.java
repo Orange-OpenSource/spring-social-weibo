@@ -15,23 +15,33 @@
  */
 package org.springframework.social.weibo.api.impl.json;
 
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.module.SimpleModule;
-import org.springframework.social.weibo.api.Comment;
+import java.util.Date;
+
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.WeiboProfile;
 
-public class WeiboModule extends SimpleModule {
-
-	public WeiboModule() {
-		super("WeiboModule", new Version(1, 0, 0, null));
+/**
+ * Annotated mixin to add Jackson annotations to Comment.
+ * 
+ * @author edva8332
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+abstract class CommentMixin {
+	CommentMixin(
+			@JsonProperty("id") long id,
+			@JsonProperty("created_at") @JsonDeserialize(using = DateDeserializer.class) Date createAt,
+			@JsonProperty("text") String text,
+			@JsonProperty("source") String source) {
 	}
 
-	@Override
-	public void setupModule(SetupContext context) {
-		context.setMixInAnnotations(WeiboProfile.class, WeiboProfileMixin.class);
-		context.setMixInAnnotations(Status.class, StatusMixin.class);
-		context.setMixInAnnotations(Comment.class, CommentMixin.class);
-	}
+	@JsonProperty("mid")
+	String mid;
+	@JsonProperty("user")
+	WeiboProfile user;
+	@JsonProperty("status")
+	Status status;
 
 }
