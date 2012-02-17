@@ -443,7 +443,7 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 	public Status updateStatus(String message, float latitude, float longitude) {
 		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
-				1);
+				3);
 		request.add("status", message);
 		request.add("lat", String.valueOf(latitude));
 		request.add("long", String.valueOf(longitude));
@@ -467,7 +467,7 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 			float longitude) {
 		requireAuthorization();
 		MultiValueMap<String, Object> request = new LinkedMultiValueMap<String, Object>(
-				2);
+				4);
 		request.add("status", message);
 		request.add("pic", media);
 		request.add("lat", String.valueOf(latitude));
