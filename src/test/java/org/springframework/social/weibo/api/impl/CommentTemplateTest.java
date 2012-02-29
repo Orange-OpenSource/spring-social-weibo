@@ -22,6 +22,9 @@ import static org.springframework.social.test.client.RequestMatchers.method;
 import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
+import java.util.Arrays;
+import java.util.List;
+
 import org.junit.Test;
 import org.springframework.social.weibo.api.AuthorFilterType;
 import org.springframework.social.weibo.api.Comment;
@@ -44,7 +47,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsByMe();
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
@@ -59,7 +63,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_source=0"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsByMe(50, 5);
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
@@ -74,7 +79,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/show.json?id=123"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate
 				.getCommentsOnStatus(123L);
 		verifyComment(comments.iterator().next());
@@ -90,7 +96,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/show.json?id=123&since_id=0&max_id=0&count=50&page=5&filter_by_author=0"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsOnStatus(
 				123L, 50, 5);
 		verifyComment(comments.iterator().next());
@@ -106,7 +113,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/timeline.json"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsTimeline();
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
@@ -121,7 +129,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/timeline.json?since_id=0&max_id=0&count=50&page=5"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsTimeline(
 				50, 5);
 		verifyComment(comments.iterator().next());
@@ -137,7 +146,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsToMe();
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
@@ -152,7 +162,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=0&filter_by_source=0"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsToMe(50, 5);
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
@@ -167,7 +178,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/to_me.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=1&filter_by_source=0"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getCommentsToMe(50, 5,
 				AuthorFilterType.FRIENDS, SourceFilterType.ALL);
 		verifyComment(comments.iterator().next());
@@ -183,7 +195,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/mentions.json"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate
 				.getMentioningComments();
 		verifyComment(comments.iterator().next());
@@ -199,7 +212,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/mentions.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=0&filter_by_source=0"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getMentioningComments(
 				50, 5);
 		verifyComment(comments.iterator().next());
@@ -215,7 +229,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.expect(requestTo("https://api.weibo.com/2/comments/mentions.json?since_id=0&max_id=0&count=50&page=5&filter_by_author=1&filter_by_source=0"))
 				.andExpect(method(GET))
 				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
+						withResponse(jsonResource("cursoredComments"),
+								responseHeaders));
 		CursoredList<Comment> comments = commentTemplate.getMentioningComments(
 				50, 5, AuthorFilterType.FRIENDS, SourceFilterType.ALL);
 		verifyComment(comments.iterator().next());
@@ -233,4 +248,16 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertNotNull(comment.getStatus());
 	}
 
+	@Test
+	public void testGetCommentsOnStatuses() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/show_batch.json?cids=1%2C2%2C3%2C4%2C5%2C6"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		List<Comment> comments = commentTemplate.getCommentsOnStatuses(Arrays
+				.asList(1L, 2L, 3L, 4L, 5L, 6L));
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+	}
 }

@@ -15,6 +15,8 @@
  */
 package org.springframework.social.weibo.api;
 
+import java.util.List;
+
 public interface CommentOperations {
 
 	CursoredList<Comment> getCommentsByMe();
@@ -49,6 +51,14 @@ public interface CommentOperations {
 	CursoredList<Comment> getCommentsOnStatus(long id, long sinceId,
 			long maxId, int pageSize, int pageNumber,
 			AuthorFilterType authorFilterType);
+
+	/**
+	 * @deprecated This API seems buggy, no result is returned
+	 * @param ids
+	 * @return
+	 */
+	@Deprecated
+	List<Comment> getCommentsOnStatuses(List<Long> ids);
 
 	CursoredList<Comment> getCommentsTimeline();
 

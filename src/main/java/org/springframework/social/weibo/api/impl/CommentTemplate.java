@@ -15,6 +15,9 @@
  */
 package org.springframework.social.weibo.api.impl;
 
+import java.net.URI;
+import java.util.List;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.AuthorFilterType;
@@ -22,6 +25,7 @@ import org.springframework.social.weibo.api.Comment;
 import org.springframework.social.weibo.api.CommentOperations;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.SourceFilterType;
+import org.springframework.social.weibo.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 class CommentTemplate extends AbstractWeiboOperations implements
@@ -108,6 +112,45 @@ class CommentTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public List<Comment> getCommentsOnStatuses(List<Long> ids) {
+		requireAuthorization();
+		URI uri = buildUri("comments/show_batch.json", "cids",
+				StringUtils.join(ids));
+		JsonNode dataNode = restTemplate.getForObject(
+				uri, JsonNode.class);
+		return deserializeDataList(dataNode, Comment.class);
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsTimeline() {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate.getForObject(
+				buildUri("comments/timeline.json"), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsTimeline(int pageSize,
+			int pageNumber) {
+		return getCommentsTimeline(0, 0, pageSize, pageNumber);
+	}
+
+	@Override
+	public CursoredList<Comment> getCommentsTimeline(long sinceId, long maxId,
+			int pageSize, int pageNumber) {
+		requireAuthorization();
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("comments/timeline.json")
+								.queryParam("since_id", String.valueOf(sinceId))
+								.queryParam("max_id", String.valueOf(maxId))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
+		return deserializeCursoredList(dataNode, Comment.class, "comments");
+	}
+
+	@Override
 	public CursoredList<Comment> getCommentsToMe() {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
@@ -144,35 +187,6 @@ class CommentTemplate extends AbstractWeiboOperations implements
 						.queryParam("filter_by_source",
 								String.valueOf(sourceFilterType.ordinal()))
 						.build(), JsonNode.class);
-		return deserializeCursoredList(dataNode, Comment.class, "comments");
-	}
-
-	@Override
-	public CursoredList<Comment> getCommentsTimeline() {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				buildUri("comments/timeline.json"), JsonNode.class);
-		return deserializeCursoredList(dataNode, Comment.class, "comments");
-	}
-
-	@Override
-	public CursoredList<Comment> getCommentsTimeline(int pageSize,
-			int pageNumber) {
-		return getCommentsTimeline(0, 0, pageSize, pageNumber);
-	}
-
-	@Override
-	public CursoredList<Comment> getCommentsTimeline(long sinceId, long maxId,
-			int pageSize, int pageNumber) {
-		requireAuthorization();
-		JsonNode dataNode = restTemplate
-				.getForObject(
-						uriBuilder("comments/timeline.json")
-								.queryParam("since_id", String.valueOf(sinceId))
-								.queryParam("max_id", String.valueOf(maxId))
-								.queryParam("count", String.valueOf(pageSize))
-								.queryParam("page", String.valueOf(pageNumber))
-								.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Comment.class, "comments");
 	}
 
