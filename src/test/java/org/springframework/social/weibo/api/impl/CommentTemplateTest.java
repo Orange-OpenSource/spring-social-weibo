@@ -44,6 +44,31 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
+	public void testCreateComment() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/create.json"))
+				.andExpect(method(POST))
+				.andExpect(
+						body("id=1&comment=%E6%88%91%E5%96%9C%E6%AC%A2%E4%BD%A0%E5%81%9A%E7%9A%84&comment_ori=0"))
+				.andRespond(
+						withResponse(jsonResource("comment"), responseHeaders));
+		Comment comment = commentTemplate.createComment(1, "我喜欢你做的");
+		verifyComment(comment);
+	}
+
+	@Test
+	public void testDeleteComment() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/destroy.json"))
+				.andExpect(method(POST))
+				.andExpect(body("cid=1"))
+				.andRespond(
+						withResponse(jsonResource("comment"), responseHeaders));
+		Comment comment = commentTemplate.deleteComment(1);
+		verifyComment(comment);
+	}
+
+	@Test
 	public void testGetCommentsByMe() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json"))
@@ -90,6 +115,19 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(7, comments.getTotalNumber());
 		assertEquals(0, comments.getPreviousCursor());
 		assertEquals(10, comments.getNextCursor());
+	}
+
+	@Test
+	public void testGetCommentsOnStatuses() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/show_batch.json?cids=1%2C2%2C3%2C4%2C5%2C6"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		List<Comment> comments = commentTemplate.getCommentsOnStatuses(Arrays
+				.asList(1L, 2L, 3L, 4L, 5L, 6L));
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
 	}
 
 	@Test
@@ -248,31 +286,5 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals("我喜欢你做的", comment.getText());
 		assertNotNull(comment.getUser());
 		assertNotNull(comment.getStatus());
-	}
-
-	@Test
-	public void testGetCommentsOnStatuses() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/comments/show_batch.json?cids=1%2C2%2C3%2C4%2C5%2C6"))
-				.andExpect(method(GET))
-				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
-		List<Comment> comments = commentTemplate.getCommentsOnStatuses(Arrays
-				.asList(1L, 2L, 3L, 4L, 5L, 6L));
-		verifyComment(comments.iterator().next());
-		assertEquals(2, comments.size());
-	}
-
-	@Test
-	public void testCreateComment() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/comments/create.json"))
-				.andExpect(method(POST))
-				.andExpect(
-						body("id=1&comment=%E6%88%91%E5%96%9C%E6%AC%A2%E4%BD%A0%E5%81%9A%E7%9A%84&comment_ori=0"))
-				.andRespond(
-						withResponse(jsonResource("comment"), responseHeaders));
-		Comment comment = commentTemplate.createComment(1, "我喜欢你做的");
-		verifyComment(comment);
 	}
 }

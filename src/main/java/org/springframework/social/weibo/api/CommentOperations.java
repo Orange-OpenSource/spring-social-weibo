@@ -24,6 +24,8 @@ public interface CommentOperations {
 	Comment createComment(long id, String comment,
 			boolean commentFromExternalSource);
 
+	Comment deleteComment(long id);
+
 	CursoredList<Comment> getCommentsByMe();
 
 	CursoredList<Comment> getCommentsByMe(int pageSize, int pageNumber);

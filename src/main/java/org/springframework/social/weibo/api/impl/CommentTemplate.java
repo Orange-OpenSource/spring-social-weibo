@@ -58,6 +58,16 @@ class CommentTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public Comment deleteComment(long id) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("cid", String.valueOf(id));
+		return restTemplate.postForObject(buildUri("comments/destroy.json"),
+				request, Comment.class);
+	}
+
+	@Override
 	public CursoredList<Comment> getCommentsByMe() {
 		requireAuthorization();
 		JsonNode dataNode = restTemplate.getForObject(
