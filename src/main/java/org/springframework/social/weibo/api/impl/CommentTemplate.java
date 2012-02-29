@@ -273,4 +273,26 @@ class CommentTemplate extends AbstractWeiboOperations implements
 						.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Comment.class, "comments");
 	}
+
+	@Override
+	public Comment replyComment(long commentId, long statusId, String comment) {
+		return replyComment(commentId, statusId, comment, false, false);
+	}
+
+	@Override
+	public Comment replyComment(long commentId, long statusId, String comment,
+			boolean withoutMention, boolean commentFromExternalSource) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				5);
+		request.add("cid", String.valueOf(commentId));
+		request.add("id", String.valueOf(statusId));
+		request.add("comment", comment);
+		request.add("without_mention",
+				StringUtils.booleanToString(withoutMention));
+		request.add("comment_ori",
+				StringUtils.booleanToString(commentFromExternalSource));
+		return restTemplate.postForObject(buildUri("comments/reply.json"),
+				request, Comment.class);
+	}
 }

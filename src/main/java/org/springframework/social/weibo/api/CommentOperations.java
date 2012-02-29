@@ -87,4 +87,9 @@ public interface CommentOperations {
 			int pageSize, int pageNumber, AuthorFilterType authorFilterType,
 			SourceFilterType sourceFilterType);
 
+	Comment replyComment(long commentId, long statusId, String comment);
+
+	Comment replyComment(long commentId, long statusId, String comment,
+			boolean withoutMention, boolean commentFromExternalSource);
+
 }

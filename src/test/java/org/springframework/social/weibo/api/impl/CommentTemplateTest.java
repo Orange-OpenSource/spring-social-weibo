@@ -69,6 +69,20 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 	}
 
 	@Test
+	public void testDeleteComments() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/destroy_batch.json"))
+				.andExpect(method(POST))
+				.andExpect(body("cids=1%2C2%2C3%2C4%2C5"))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		List<Comment> comments = commentTemplate.deleteComments(Arrays.asList(
+				1L, 2L, 3L, 4L, 5L));
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+	}
+
+	@Test
 	public void testGetCommentsByMe() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/by_me.json"))
@@ -280,25 +294,23 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(10, comments.getNextCursor());
 	}
 
+	@Test
+	public void testReplyComment() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/reply.json"))
+				.andExpect(method(POST))
+				.andExpect(body("cid=1&"))
+				.andRespond(
+						withResponse(jsonResource("comment"), responseHeaders));
+		Comment comment = commentTemplate.replyComment(1L, 99L, "我喜欢你做的");
+		verifyComment(comment);
+	}
+
 	private void verifyComment(Comment comment) {
 		assertEquals(12438492184L, comment.getId());
 		assertEquals(1306860625000L, comment.getCreatedAt().getTime());
 		assertEquals("我喜欢你做的", comment.getText());
 		assertNotNull(comment.getUser());
 		assertNotNull(comment.getStatus());
-	}
-
-	@Test
-	public void testDeleteComments() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/comments/destroy_batch.json"))
-				.andExpect(method(POST))
-				.andExpect(body("cids=1%2C2%2C3%2C4%2C5"))
-				.andRespond(
-						withResponse(jsonResource("comments"), responseHeaders));
-		List<Comment> comments = commentTemplate.deleteComments(Arrays.asList(
-				1L, 2L, 3L, 4L, 5L));
-		verifyComment(comments.iterator().next());
-		assertEquals(2, comments.size());
 	}
 }
