@@ -287,4 +287,18 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		assertNotNull(comment.getUser());
 		assertNotNull(comment.getStatus());
 	}
+
+	@Test
+	public void testDeleteComments() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/destroy_batch.json"))
+				.andExpect(method(POST))
+				.andExpect(body("cids=1%2C2%2C3%2C4%2C5"))
+				.andRespond(
+						withResponse(jsonResource("comments"), responseHeaders));
+		List<Comment> comments = commentTemplate.deleteComments(Arrays.asList(
+				1L, 2L, 3L, 4L, 5L));
+		verifyComment(comments.iterator().next());
+		assertEquals(2, comments.size());
+	}
 }

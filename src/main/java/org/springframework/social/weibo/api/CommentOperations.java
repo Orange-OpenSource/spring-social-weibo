@@ -26,6 +26,8 @@ public interface CommentOperations {
 
 	Comment deleteComment(long id);
 
+	List<Comment> deleteComments(List<Long> ids);
+
 	CursoredList<Comment> getCommentsByMe();
 
 	CursoredList<Comment> getCommentsByMe(int pageSize, int pageNumber);
