@@ -28,6 +28,25 @@ public class UserTemplateTest extends AbstractWeiboOperationsTest {
 
 	private UserTemplate userTemplate;
 
+	@Override
+	public void setUp() {
+		userTemplate = new UserTemplate(getObjectMapper(), getRestTemplate(),
+				true);
+	}
+
+	@Test
+	public void testGetUserProfileByDomainName() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/users/domain_show.json?domain=domain"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("profile"), responseHeaders));
+
+		WeiboProfile profile = userTemplate
+				.getUserProfileByDomainName("domain");
+		verifyWeiboProfile(profile);
+	}
+
 	@Test
 	public void testGetUserProfileById() {
 		long uid = 123L;
@@ -55,12 +74,6 @@ public class UserTemplateTest extends AbstractWeiboOperationsTest {
 		WeiboProfile profile = userTemplate
 				.getUserProfileByScreenName(screenName);
 		verifyWeiboProfile(profile);
-	}
-
-	@Override
-	public void setUp() {
-		userTemplate = new UserTemplate(getObjectMapper(), getRestTemplate(),
-				true);
 	}
 
 }
