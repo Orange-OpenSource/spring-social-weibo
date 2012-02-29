@@ -26,6 +26,8 @@ import org.springframework.social.weibo.api.CommentOperations;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.SourceFilterType;
 import org.springframework.social.weibo.util.StringUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 class CommentTemplate extends AbstractWeiboOperations implements
@@ -34,6 +36,25 @@ class CommentTemplate extends AbstractWeiboOperations implements
 	protected CommentTemplate(ObjectMapper objectMapper,
 			RestTemplate restTemplate, boolean isAuthorized) {
 		super(objectMapper, restTemplate, isAuthorized);
+	}
+
+	@Override
+	public Comment createComment(long id, String comment) {
+		return createComment(id, comment, false);
+	}
+
+	@Override
+	public Comment createComment(long id, String comment,
+			boolean commentFromExternalSource) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				3);
+		request.add("id", String.valueOf(id));
+		request.add("comment", comment);
+		request.add("comment_ori",
+				StringUtils.booleanToString(commentFromExternalSource));
+		return restTemplate.postForObject(buildUri("comments/create.json"),
+				request, Comment.class);
 	}
 
 	@Override
@@ -116,8 +137,7 @@ class CommentTemplate extends AbstractWeiboOperations implements
 		requireAuthorization();
 		URI uri = buildUri("comments/show_batch.json", "cids",
 				StringUtils.join(ids));
-		JsonNode dataNode = restTemplate.getForObject(
-				uri, JsonNode.class);
+		JsonNode dataNode = restTemplate.getForObject(uri, JsonNode.class);
 		return deserializeDataList(dataNode, Comment.class);
 	}
 

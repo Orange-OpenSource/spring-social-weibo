@@ -18,6 +18,8 @@ package org.springframework.social.weibo.api.impl;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.social.test.client.RequestMatchers.body;
 import static org.springframework.social.test.client.RequestMatchers.method;
 import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
@@ -259,5 +261,18 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 				.asList(1L, 2L, 3L, 4L, 5L, 6L));
 		verifyComment(comments.iterator().next());
 		assertEquals(2, comments.size());
+	}
+
+	@Test
+	public void testCreateComment() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/comments/create.json"))
+				.andExpect(method(POST))
+				.andExpect(
+						body("id=1&comment=%E6%88%91%E5%96%9C%E6%AC%A2%E4%BD%A0%E5%81%9A%E7%9A%84&comment_ori=0"))
+				.andRespond(
+						withResponse(jsonResource("comment"), responseHeaders));
+		Comment comment = commentTemplate.createComment(1, "我喜欢你做的");
+		verifyComment(comment);
 	}
 }

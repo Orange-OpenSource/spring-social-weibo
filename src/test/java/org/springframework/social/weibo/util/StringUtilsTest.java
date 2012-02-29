@@ -34,4 +34,10 @@ public class StringUtilsTest {
 		assertEquals("1,2,3", StringUtils.join(Arrays.asList(1L, 2L, 3L)));
 	}
 
+	@Test
+	public void testBooleanToString() {
+		assertEquals("1", StringUtils.booleanToString(true));
+		assertEquals("0", StringUtils.booleanToString(false));
+	}
+
 }

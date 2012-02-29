@@ -26,16 +26,13 @@ import org.springframework.social.weibo.api.SourceFilterType;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.StatusContentType;
 import org.springframework.social.weibo.api.TimelineOperations;
+import org.springframework.social.weibo.util.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class TimelineTemplate extends AbstractWeiboOperations implements
 		TimelineOperations {
-
-	private static String booleanToString(boolean value) {
-		return value ? "1" : "0";
-	}
 
 	protected TimelineTemplate(ObjectMapper objectMapper,
 			RestTemplate restTemplate, boolean isAuthorized) {
@@ -56,17 +53,22 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 			long maxId, int pageSize, int pageNumber,
 			boolean onlyApplicationStatus, StatusContentType statusContentType) {
 		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder(url)
-						.queryParam("since_id", String.valueOf(sinceId))
-						.queryParam("max_id", String.valueOf(maxId))
-						.queryParam("count", String.valueOf(pageSize))
-						.queryParam("page", String.valueOf(pageNumber))
-						.queryParam("base_app",
-								booleanToString(onlyApplicationStatus))
-						.queryParam("feature",
-								String.valueOf(statusContentType.ordinal()))
-						.build(), JsonNode.class);
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder(url)
+								.queryParam("since_id", String.valueOf(sinceId))
+								.queryParam("max_id", String.valueOf(maxId))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.queryParam(
+										"base_app",
+										StringUtils
+												.booleanToString(onlyApplicationStatus))
+								.queryParam(
+										"feature",
+										String.valueOf(statusContentType
+												.ordinal())).build(),
+						JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
 
@@ -116,8 +118,10 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 				.getForObject(
 						uriBuilder("statuses/hot/comments_daily.json")
 								.queryParam("count", String.valueOf(pageSize))
-								.queryParam("base_app",
-										booleanToString(onlyApplicationStatus))
+								.queryParam(
+										"base_app",
+										StringUtils
+												.booleanToString(onlyApplicationStatus))
 								.build(), JsonNode.class);
 		return deserializeDataList(dataNode, Status.class);
 	}
@@ -138,8 +142,10 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 				.getForObject(
 						uriBuilder("statuses/hot/repost_daily.json")
 								.queryParam("count", String.valueOf(pageSize))
-								.queryParam("base_app",
-										booleanToString(onlyApplicationStatus))
+								.queryParam(
+										"base_app",
+										StringUtils
+												.booleanToString(onlyApplicationStatus))
 								.build(), JsonNode.class);
 		return deserializeDataList(dataNode, Status.class);
 	}
@@ -231,8 +237,8 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 						.queryParam("filter_by_source",
 								String.valueOf(sourceFilterType.ordinal()))
 						.queryParam("filter_by_type",
-								booleanToString(createdInWeibo)).build(),
-				JsonNode.class);
+								StringUtils.booleanToString(createdInWeibo))
+						.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
 
@@ -257,8 +263,10 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 						uriBuilder("statuses/public_timeline.json")
 								.queryParam("count", String.valueOf(pageSize))
 								.queryParam("page", String.valueOf(pageNumber))
-								.queryParam("base_app",
-										booleanToString(onlyApplicationStatus))
+								.queryParam(
+										"base_app",
+										StringUtils
+												.booleanToString(onlyApplicationStatus))
 								.build(), JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
@@ -359,18 +367,23 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 			long maxId, int pageSize, int pageNumber,
 			boolean onlyApplicationStatus, StatusContentType statusContentType) {
 		requireAuthorization();
-		JsonNode dataNode = restTemplate.getForObject(
-				uriBuilder("statuses/user_timeline.json")
-						.queryParam("uid", String.valueOf(uid))
-						.queryParam("since_id", String.valueOf(sinceId))
-						.queryParam("max_id", String.valueOf(maxId))
-						.queryParam("count", String.valueOf(pageSize))
-						.queryParam("page", String.valueOf(pageNumber))
-						.queryParam("base_app",
-								booleanToString(onlyApplicationStatus))
-						.queryParam("feature",
-								String.valueOf(statusContentType.ordinal()))
-						.build(), JsonNode.class);
+		JsonNode dataNode = restTemplate
+				.getForObject(
+						uriBuilder("statuses/user_timeline.json")
+								.queryParam("uid", String.valueOf(uid))
+								.queryParam("since_id", String.valueOf(sinceId))
+								.queryParam("max_id", String.valueOf(maxId))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.queryParam(
+										"base_app",
+										StringUtils
+												.booleanToString(onlyApplicationStatus))
+								.queryParam(
+										"feature",
+										String.valueOf(statusContentType
+												.ordinal())).build(),
+						JsonNode.class);
 		return deserializeCursoredList(dataNode, Status.class, "statuses");
 	}
 
@@ -390,8 +403,10 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 				.getForObject(
 						uriBuilder("statuses/hot/comments_weekly.json")
 								.queryParam("count", String.valueOf(pageSize))
-								.queryParam("base_app",
-										booleanToString(onlyApplicationStatus))
+								.queryParam(
+										"base_app",
+										StringUtils
+												.booleanToString(onlyApplicationStatus))
 								.build(), JsonNode.class);
 		return deserializeDataList(dataNode, Status.class);
 	}
@@ -412,8 +427,10 @@ public class TimelineTemplate extends AbstractWeiboOperations implements
 				.getForObject(
 						uriBuilder("statuses/hot/repost_weekly.json")
 								.queryParam("count", String.valueOf(pageSize))
-								.queryParam("base_app",
-										booleanToString(onlyApplicationStatus))
+								.queryParam(
+										"base_app",
+										StringUtils
+												.booleanToString(onlyApplicationStatus))
 								.build(), JsonNode.class);
 		return deserializeDataList(dataNode, Status.class);
 	}

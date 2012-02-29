@@ -36,4 +36,8 @@ public abstract class StringUtils {
 		return stringBuilder.toString();
 	}
 
+	public static String booleanToString(boolean value) {
+		return value ? "1" : "0";
+	}
+
 }

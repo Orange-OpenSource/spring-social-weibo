@@ -19,6 +19,11 @@ import java.util.List;
 
 public interface CommentOperations {
 
+	Comment createComment(long id, String comment);
+
+	Comment createComment(long id, String comment,
+			boolean commentFromExternalSource);
+
 	CursoredList<Comment> getCommentsByMe();
 
 	CursoredList<Comment> getCommentsByMe(int pageSize, int pageNumber);
