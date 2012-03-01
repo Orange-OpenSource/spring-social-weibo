@@ -17,7 +17,9 @@ package org.springframework.social.weibo.api.impl.json;
 
 import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.module.SimpleModule;
+import org.springframework.social.weibo.api.ApiRateLimit;
 import org.springframework.social.weibo.api.Comment;
+import org.springframework.social.weibo.api.RateLimitStatus;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.WeiboProfile;
 
@@ -32,6 +34,9 @@ public class WeiboModule extends SimpleModule {
 		context.setMixInAnnotations(WeiboProfile.class, WeiboProfileMixin.class);
 		context.setMixInAnnotations(Status.class, StatusMixin.class);
 		context.setMixInAnnotations(Comment.class, CommentMixin.class);
+		context.setMixInAnnotations(ApiRateLimit.class, ApiRateLimitMixin.class);
+		context.setMixInAnnotations(RateLimitStatus.class,
+				RateLimitStatusMixin.class);
 	}
 
 }

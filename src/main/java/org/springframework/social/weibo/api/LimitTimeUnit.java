@@ -15,10 +15,6 @@
  */
 package org.springframework.social.weibo.api;
 
-public interface AccountOperations {
-
-	long getUid();
-
-	RateLimitStatus getRateLimitStatus();
-
+public enum LimitTimeUnit {
+	HOURS, DAYS
 }

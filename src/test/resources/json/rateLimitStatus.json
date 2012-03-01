@@ -1,0 +1,36 @@
+{
+	"api_rate_limits" : [{
+			"api" : "/statuses/update",
+			"limit" : 30,
+			"limit_time_unit" : "HOURS",
+			"remaining_hits" : 10
+		}, {
+			"api" : "/comments/create",
+			"limit" : 60,
+			"limit_time_unit" : "HOURS",
+			"remaining_hits" : 60
+		}, {
+			"api" : "/direct_messages/new",
+			"limit" : 60,
+			"limit_time_unit" : "HOURS",
+			"remaining_hits" : 60
+		}, {
+			"api" : "/friendships/create",
+			"limit" : 60,
+			"limit_time_unit" : "HOURS",
+			"remaining_hits" : 60
+		}, {
+			"api" : "/friendships/create",
+			"limit" : 100,
+			"limit_time_unit" : "DAYS",
+			"remaining_hits" : 100
+		}
+	],
+	"ip_limit" : 1000,
+	"limit_time_unit" : "HOURS",
+	"remaining_ip_hits" : 999,
+	"remaining_user_hits" : 149,
+	"reset_time" : "2012-02-29 18:00:00",
+	"reset_time_in_seconds" : 2295,
+	"user_limit" : 150
+}

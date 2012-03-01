@@ -16,32 +16,33 @@
 package org.springframework.social.weibo.api.impl.json;
 
 import java.util.Date;
+import java.util.List;
 
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.springframework.social.weibo.api.Status;
-import org.springframework.social.weibo.api.WeiboProfile;
+import org.springframework.social.weibo.api.ApiRateLimit;
+import org.springframework.social.weibo.api.LimitTimeUnit;
 
-/**
- * Annotated mixin to add Jackson annotations to Comment.
- * 
- * @author edva8332
- */
 @JsonIgnoreProperties(ignoreUnknown = true)
-abstract class CommentMixin {
-	CommentMixin(
-			@JsonProperty("id") long id,
-			@JsonProperty("created_at") @JsonDeserialize(using = TimelineDateDeserializer.class) Date createAt,
-			@JsonProperty("text") String text,
-			@JsonProperty("source") String source) {
-	}
+class RateLimitStatusMixin {
 
-	@JsonProperty("mid")
-	String mid;
-	@JsonProperty("user")
-	WeiboProfile user;
-	@JsonProperty("status")
-	Status status;
+	@JsonProperty("ip_limit")
+	int ipLimit;
+	@JsonProperty("limit_time_unit")
+	LimitTimeUnit limitTimeUnit;
+	@JsonProperty("remaining_ip_hits")
+	int remainingIpHits;
+	@JsonProperty("remaining_user_hits")
+	int remainingUserHits;
+	@JsonProperty("reset_time")
+	@JsonDeserialize(using = DateDeserializer.class)
+	Date resetTime;
+	@JsonProperty("reset_time_in_seconds")
+	int resetTimeInSeconds;
+	@JsonProperty("user_limit")
+	int userLimit;
+	@JsonProperty("api_rate_limits")
+	List<ApiRateLimit> apiRateLimits;
 
 }

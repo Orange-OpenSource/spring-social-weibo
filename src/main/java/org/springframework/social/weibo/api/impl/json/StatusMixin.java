@@ -33,7 +33,7 @@ abstract class StatusMixin {
 
 	StatusMixin(
 			@JsonProperty("id") Long id,
-			@JsonProperty("created_at") @JsonDeserialize(using = DateDeserializer.class) Date createAt,
+			@JsonProperty("created_at") @JsonDeserialize(using = TimelineDateDeserializer.class) Date createAt,
 			@JsonProperty("text") String text,
 			@JsonProperty("source") String source,
 			@JsonProperty("favorited") boolean favorited,

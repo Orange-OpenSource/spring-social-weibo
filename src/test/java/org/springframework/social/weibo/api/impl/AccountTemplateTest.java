@@ -21,7 +21,12 @@ import static org.springframework.social.test.client.RequestMatchers.method;
 import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
+import java.util.List;
+
 import org.junit.Test;
+import org.springframework.social.weibo.api.ApiRateLimit;
+import org.springframework.social.weibo.api.LimitTimeUnit;
+import org.springframework.social.weibo.api.RateLimitStatus;
 
 public class AccountTemplateTest extends AbstractWeiboOperationsTest {
 
@@ -43,4 +48,31 @@ public class AccountTemplateTest extends AbstractWeiboOperationsTest {
 				getRestTemplate(), true);
 	}
 
+	@Test
+	public void testGetRateLimitStatus() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/account/rate_limit_status.json"))
+				.andExpect(method(GET))
+				.andRespond(
+						withResponse(jsonResource("rateLimitStatus"),
+								responseHeaders));
+		RateLimitStatus rateLimitStatus = accountTemplate.getRateLimitStatus();
+
+		List<ApiRateLimit> apiRateLimits = rateLimitStatus.getApiRateLimits();
+		assertEquals(5, apiRateLimits.size());
+		ApiRateLimit updateStatusRateLimit = apiRateLimits.iterator().next();
+		assertEquals("/statuses/update", updateStatusRateLimit.getApi());
+		assertEquals(30, updateStatusRateLimit.getLimit());
+		assertEquals(LimitTimeUnit.HOURS,
+				updateStatusRateLimit.getLimitTimeUnit());
+		assertEquals(10, updateStatusRateLimit.getRemainingHits());
+
+		assertEquals(1000, rateLimitStatus.getIpLimit());
+		assertEquals(LimitTimeUnit.HOURS, rateLimitStatus.getLimitTimeUnit());
+		assertEquals(999, rateLimitStatus.getRemainingIpHits());
+		assertEquals(149, rateLimitStatus.getRemainingUserHits());
+		assertEquals(1330509600000L, rateLimitStatus.getResetTime().getTime());
+		assertEquals(2295, rateLimitStatus.getResetTimeInSeconds());
+		assertEquals(150, rateLimitStatus.getUserLimit());
+	}
 }

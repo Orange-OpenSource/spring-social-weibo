@@ -19,6 +19,7 @@ import java.util.Map;
 
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.AccountOperations;
+import org.springframework.social.weibo.api.RateLimitStatus;
 import org.springframework.web.client.RestTemplate;
 
 class AccountTemplate extends AbstractWeiboOperations implements
@@ -35,5 +36,13 @@ class AccountTemplate extends AbstractWeiboOperations implements
 		return Long.valueOf(restTemplate
 				.getForObject(buildUri("account/get_uid.json"), Map.class)
 				.get("uid").toString());
+	}
+
+	@Override
+	public RateLimitStatus getRateLimitStatus() {
+		requireAuthorization();
+		return restTemplate.getForObject(
+				buildUri("account/rate_limit_status.json"),
+				RateLimitStatus.class);
 	}
 }

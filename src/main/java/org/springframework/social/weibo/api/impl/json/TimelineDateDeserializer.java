@@ -15,36 +15,13 @@
  */
 package org.springframework.social.weibo.api.impl.json;
 
-import java.io.IOException;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
-import java.util.Date;
-import java.util.Locale;
+class TimelineDateDeserializer extends DateDeserializer {
 
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
-
-public class DateDeserializer extends JsonDeserializer<Date> {
-
-	public DateDeserializer() {
-		super();
-	}
+	private static final String TIMELINE_DATE_FORMAT = "EEE MMM dd HH:mm:ss ZZZZZ yyyy";
 
 	@Override
-	public Date deserialize(JsonParser jp, DeserializationContext ctxt)
-			throws IOException, JsonProcessingException {
-		try {
-			return new SimpleDateFormat(getDateFormat(), Locale.ENGLISH)
-					.parse(jp.getText());
-		} catch (ParseException e) {
-			return null;
-		}
-	}
-
 	protected String getDateFormat() {
-		return "yyyy-MM-dd HH:mm:ss";
+		return TIMELINE_DATE_FORMAT;
 	}
 
 }

@@ -38,7 +38,7 @@ abstract class WeiboProfileMixin {
 			@JsonProperty("profile_image_url") String profileImageUrl,
 			@JsonProperty("description") String description,
 			@JsonProperty("location") String location,
-			@JsonProperty("created_at") @JsonDeserialize(using = DateDeserializer.class) Date createAt) {
+			@JsonProperty("created_at") @JsonDeserialize(using = TimelineDateDeserializer.class) Date createAt) {
 	}
 
 	@JsonProperty("province")
