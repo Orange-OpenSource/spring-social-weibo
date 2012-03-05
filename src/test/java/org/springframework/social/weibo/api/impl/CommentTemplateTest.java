@@ -299,7 +299,8 @@ public class CommentTemplateTest extends AbstractWeiboOperationsTest {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/comments/reply.json"))
 				.andExpect(method(POST))
-				.andExpect(body("cid=1&"))
+				.andExpect(
+						body("cid=1&id=99&comment=%E6%88%91%E5%96%9C%E6%AC%A2%E4%BD%A0%E5%81%9A%E7%9A%84&without_mention=0&comment_ori=0"))
 				.andRespond(
 						withResponse(jsonResource("comment"), responseHeaders));
 		Comment comment = commentTemplate.replyComment(1L, 99L, "我喜欢你做的");
