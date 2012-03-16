@@ -177,4 +177,17 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		verifyFavorite(favoriteTemplate.createFavorite(1));
 	}
 
+	@Test
+	public void testDeleteFavorite() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/destroy.json"))
+				.andExpect(method(POST))
+				.andExpect(body("id=1"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("favorite"), responseHeaders));
+		verifyFavorite(favoriteTemplate.deleteFavorite(1));
+
+	}
+
 }

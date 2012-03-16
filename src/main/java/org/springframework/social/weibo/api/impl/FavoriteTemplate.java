@@ -113,4 +113,14 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 				request, Favorite.class);
 	}
 
+	@Override
+	public Favorite deleteFavorite(long statusId) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("id", String.valueOf(statusId));
+		return restTemplate.postForObject(buildUri("favorites/destroy.json"),
+				request, Favorite.class);
+	}
+
 }

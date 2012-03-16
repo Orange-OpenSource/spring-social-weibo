@@ -21,6 +21,8 @@ public interface FavoriteOperations {
 
 	Favorite createFavorite(long statusId);
 
+	Favorite deleteFavorite(long statusId);
+
 	Favorite getFavorite(long id);
 
 	CursoredList<Favorite> getFavorites();
