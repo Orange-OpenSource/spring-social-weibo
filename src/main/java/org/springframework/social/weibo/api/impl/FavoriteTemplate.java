@@ -47,21 +47,21 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public Favorite deleteFavorite(long statusId) {
+	public Favorite deleteFavorite(long id) {
 		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
 				1);
-		request.add("id", String.valueOf(statusId));
+		request.add("id", String.valueOf(id));
 		return restTemplate.postForObject(buildUri("favorites/destroy.json"),
 				request, Favorite.class);
 	}
 
 	@Override
-	public boolean deleteFavorites(List<Long> statusId) {
+	public boolean deleteFavorites(List<Long> ids) {
 		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
 				1);
-		request.add("ids", StringUtils.join(statusId));
+		request.add("ids", StringUtils.join(ids));
 		JsonNode jsonNode = restTemplate.postForObject(
 				buildUri("favorites/destroy_batch.json"), request,
 				JsonNode.class);

@@ -23,9 +23,9 @@ public interface FavoriteOperations {
 
 	Favorite createFavorite(long statusId);
 
-	Favorite deleteFavorite(long statusId);
+	Favorite deleteFavorite(long id);
 
-	boolean deleteFavorites(List<Long> statusIds);
+	boolean deleteFavorites(List<Long> ids);
 
 	Favorite getFavorite(long id);
 
