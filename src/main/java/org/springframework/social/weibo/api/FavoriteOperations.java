@@ -25,6 +25,11 @@ public interface FavoriteOperations {
 
 	CursoredList<Favorite> getFavorites(int pageSize, int pageNumber);
 
+	CursoredList<Favorite> getFavoritesByTag(long tagId);
+
+	CursoredList<Favorite> getFavoritesByTag(long tagId, int pageSize,
+			int pageNumber);
+
 	CursoredList<Tag> getTags();
 
 	CursoredList<Tag> getTags(int pageSize, int pageNumber);

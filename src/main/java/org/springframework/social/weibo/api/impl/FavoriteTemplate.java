@@ -32,6 +32,13 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
+	public Favorite getFavorite(long id) {
+		requireAuthorization();
+		return restTemplate.getForObject(uriBuilder("favorites/show.json")
+				.queryParam("id", String.valueOf(id)).build(), Favorite.class);
+	}
+
+	@Override
 	public CursoredList<Favorite> getFavorites() {
 		requireAuthorization();
 		JsonNode jsonNode = restTemplate.getForObject(
@@ -52,22 +59,46 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public Favorite getFavorite(long id) {
+	public CursoredList<Favorite> getFavoritesByTag(long tagId) {
 		requireAuthorization();
-		return restTemplate.getForObject(uriBuilder("favorites/show.json")
-				.queryParam("id", String.valueOf(id)).build(), Favorite.class);
+		JsonNode jsonNode = restTemplate.getForObject(
+				uriBuilder("favorites/by_tags.json").queryParam("tid",
+						String.valueOf(tagId)).build(), JsonNode.class);
+		return deserializeCursoredList(jsonNode, Favorite.class, "favorites");
+	}
+
+	@Override
+	public CursoredList<Favorite> getFavoritesByTag(long tagId, int pageSize,
+			int pageNumber) {
+		requireAuthorization();
+		JsonNode jsonNode = restTemplate
+				.getForObject(
+						uriBuilder("favorites/by_tags.json")
+								.queryParam("tid", String.valueOf(tagId))
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
+		return deserializeCursoredList(jsonNode, Favorite.class, "favorites");
 	}
 
 	@Override
 	public CursoredList<Tag> getTags() {
-		// TODO Auto-generated method stub
-		return null;
+		requireAuthorization();
+		JsonNode jsonNode = restTemplate.getForObject(
+				buildUri("favorites/tags.json"), JsonNode.class);
+		return deserializeCursoredList(jsonNode, Tag.class, "tags");
 	}
 
 	@Override
 	public CursoredList<Tag> getTags(int pageSize, int pageNumber) {
-		// TODO Auto-generated method stub
-		return null;
+		requireAuthorization();
+		JsonNode jsonNode = restTemplate
+				.getForObject(
+						uriBuilder("favorites/tags.json")
+								.queryParam("count", String.valueOf(pageSize))
+								.queryParam("page", String.valueOf(pageNumber))
+								.build(), JsonNode.class);
+		return deserializeCursoredList(jsonNode, Tag.class, "tags");
 	}
 
 }

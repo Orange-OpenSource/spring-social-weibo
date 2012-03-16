@@ -67,17 +67,8 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		verifyFavorite(firstFavorite);
 	}
 
-	private void verifyFavorite(Favorite favorite) {
-		List<Tag> tags = favorite.getTags();
-		assertEquals(2, tags.size());
-		Tag firstTag = tags.iterator().next();
-		verifyTag(firstTag);
-		assertEquals(1306998976000L, favorite.getFavoritedTime().getTime());
-		StatusMatcher.verifyStatus(favorite.getStatus());
-	}
-
 	@Test
-	public void testGetFavoritesIntInt() {
+	public void testGetFavoritesPagination() {
 		mockServer
 				.expect(requestTo("https://api.weibo.com/2/favorites.json?count=20&page=5"))
 				.andExpect(method(GET))
@@ -93,10 +84,83 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		verifyFavorite(firstFavorite);
 	}
 
+	@Test
+	public void testGetTags() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/tags.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("cursoredFavoriteTags"),
+								responseHeaders));
+		CursoredList<Tag> cursoredList = favoriteTemplate.getTags();
+		assertEquals(6, cursoredList.getTotalNumber());
+		assertEquals(2, cursoredList.size());
+		verifyTag(cursoredList.iterator().next());
+	}
+
+	@Test
+	public void testGetTagsPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/tags.json?count=20&page=5"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("cursoredFavoriteTags"),
+								responseHeaders));
+		CursoredList<Tag> cursoredList = favoriteTemplate.getTags(20, 5);
+		assertEquals(6, cursoredList.getTotalNumber());
+		assertEquals(2, cursoredList.size());
+		verifyTag(cursoredList.iterator().next());
+	}
+
+	private void verifyFavorite(Favorite favorite) {
+		List<Tag> tags = favorite.getTags();
+		assertEquals(2, tags.size());
+		Tag firstTag = tags.iterator().next();
+		verifyTag(firstTag);
+		assertEquals(1306998976000L, favorite.getFavoritedTime().getTime());
+		StatusMatcher.verifyStatus(favorite.getStatus());
+	}
+
 	private void verifyTag(Tag firstTag) {
 		assertEquals(23, firstTag.getId());
 		assertEquals("80后", firstTag.getValue());
 		assertEquals(25369, firstTag.getCount());
+	}
+
+	@Test
+	public void testGetFavoritesByTag() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/by_tags.json?tid=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("cursoredFavorites"),
+								responseHeaders));
+		CursoredList<Favorite> cursoredList = favoriteTemplate
+				.getFavoritesByTag(1);
+		assertEquals(16, cursoredList.getTotalNumber());
+		assertEquals(2, cursoredList.size());
+		Favorite firstFavorite = cursoredList.iterator().next();
+		verifyFavorite(firstFavorite);
+	}
+
+	@Test
+	public void testGetFavoritesByTagPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/by_tags.json?tid=1&count=20&page=5"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("cursoredFavorites"),
+								responseHeaders));
+		CursoredList<Favorite> cursoredList = favoriteTemplate
+				.getFavoritesByTag(1, 20, 5);
+		assertEquals(16, cursoredList.getTotalNumber());
+		assertEquals(2, cursoredList.size());
+		Favorite firstFavorite = cursoredList.iterator().next();
+		verifyFavorite(firstFavorite);
 	}
 
 }
