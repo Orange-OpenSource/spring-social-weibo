@@ -16,8 +16,6 @@
 package org.springframework.social.weibo.api.impl;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.social.test.client.RequestMatchers.body;
@@ -34,7 +32,7 @@ import org.springframework.core.io.Resource;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.StatusContentType;
-import org.springframework.social.weibo.api.WeiboProfile;
+import org.springframework.social.weibo.matcher.StatusMatcher;
 
 public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 
@@ -66,7 +64,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("status"), responseHeaders));
 		Status status = timelineTemplate.deleteStatus(1L);
-		verifyStatus(status);
+		StatusMatcher.verifyStatus(status);
 	}
 
 	@Test
@@ -78,9 +76,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getBilateralTimeline();
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -94,9 +92,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getBilateralTimeline(
 				10, 5, true);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -110,9 +108,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getBilateralTimeline(
 				123L, 456L, 10, 5, false, StatusContentType.MUSIC);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -126,9 +124,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getBilateralTimeline(
 				10, 5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -144,7 +142,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getDailyHotComments();
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -160,7 +158,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getDailyHotComments(5, false);
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -176,7 +174,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getDailyHotRepost();
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -192,7 +190,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getDailyHotRepost(5, false);
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -205,9 +203,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline();
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -221,9 +219,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline(10,
 				5, true);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -237,9 +235,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline(
 				123L, 456L, 10, 5, false, StatusContentType.MUSIC);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -253,9 +251,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getFriendsTimeline(10,
 				5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -268,9 +266,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline();
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -284,9 +282,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline(10, 5,
 				true);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -300,9 +298,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline(123L,
 				456L, 10, 5, false, StatusContentType.MUSIC);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -315,9 +313,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getHomeTimeline(10, 5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -330,9 +328,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getMentions();
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -345,9 +343,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getMentions(10, 5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -360,9 +358,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getPublicTimeline();
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -376,9 +374,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getPublicTimeline(10,
 				5, true);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -392,9 +390,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getPublicTimeline(10,
 				5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -408,9 +406,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("repostTimeline"),
 								responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getRepostByMe();
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -424,9 +422,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("repostTimeline"),
 								responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getRepostByMe(10, 5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -440,9 +438,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("repostTimeline"),
 								responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getRepostTimeline(1L);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -457,9 +455,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 								responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getRepostTimeline(1L,
 				10, 5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -472,9 +470,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 				.andRespond(
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -488,9 +486,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L,
 				10, 5, true);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -504,9 +502,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L,
 				123L, 456L, 10, 5, false, StatusContentType.MUSIC);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -520,9 +518,9 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("timeline"), responseHeaders));
 		CursoredList<Status> statuses = timelineTemplate.getUserTimeline(1L,
 				10, 5);
-		verifyStatusList(statuses);
+		StatusMatcher.verifyStatusList(statuses);
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -538,7 +536,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getWeeklyHotComments();
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -554,7 +552,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getWeeklyHotComments(5, false);
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -570,7 +568,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getWeeklyHotRepost();
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -586,7 +584,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 		List<Status> statuses = timelineTemplate.getWeeklyHotRepost(5, false);
 		assertEquals(2, statuses.size());
 		Status firstStatus = statuses.iterator().next();
-		verifyStatus(firstStatus);
+		StatusMatcher.verifyStatus(firstStatus);
 		assertEquals("你好", firstStatus.getText());
 	}
 
@@ -619,7 +617,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("status"), responseHeaders));
 
 		Status status = timelineTemplate.updateStatus(message);
-		verifyStatus(status);
+		StatusMatcher.verifyStatus(status);
 		assertEquals(message, status.getText());
 	}
 
@@ -633,7 +631,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("status"), responseHeaders));
 
 		Status status = timelineTemplate.getStatus(1L);
-		verifyStatus(status);
+		StatusMatcher.verifyStatus(status);
 		assertEquals("你好", status.getText());
 	}
 
@@ -649,7 +647,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 
 		Status status = timelineTemplate
 				.updateStatus(message, createResource());
-		verifyStatus(status);
+		StatusMatcher.verifyStatus(status);
 		assertEquals(message, status.getText());
 	}
 
@@ -665,7 +663,7 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 
 		Status status = timelineTemplate.updateStatus(message,
 				createResource(), 48.856667f, 2.350833f);
-		verifyStatus(status);
+		StatusMatcher.verifyStatus(status);
 		assertEquals(message, status.getText());
 	}
 
@@ -683,34 +681,15 @@ public class TimelineTemplateTest extends AbstractWeiboOperationsTest {
 
 		Status status = timelineTemplate.updateStatus(message, 48.856667f,
 				2.350833f);
-		verifyStatus(status);
+		StatusMatcher.verifyStatus(status);
 		assertEquals(message, status.getText());
 	}
 
 	private void verifyRepost(Status status) {
-		verifyStatus(status);
+		StatusMatcher.verifyStatus(status);
 		Status originalStatus = status.getOriginalStatus();
 		assertEquals(1306231493000L, originalStatus.getCreatedAt().getTime());
 		assertEquals("你好", originalStatus.getText());
-	}
-
-	private void verifyStatus(Status status) {
-		assertEquals(1306835215000L, status.getCreatedAt().getTime());
-		assertEquals(11488058246L, status.getId().longValue());
-		assertEquals("5612814510546515491", status.getMid());
-		assertFalse(status.isFavorited());
-		assertFalse(status.isTruncated());
-		WeiboProfile user = status.getUser();
-		assertNotNull(user);
-		assertEquals("zaku", user.getScreenName());
-		assertEquals(1404376560L, user.getId().longValue());
-	}
-
-	private void verifyStatusList(CursoredList<Status> statuses) {
-		assertEquals(2, statuses.size());
-		assertEquals(1L, statuses.getNextCursor());
-		assertEquals(0, statuses.getPreviousCursor());
-		assertEquals(81655, statuses.getTotalNumber());
 	}
 
 }

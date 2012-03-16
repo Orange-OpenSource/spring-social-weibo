@@ -19,9 +19,12 @@ import org.codehaus.jackson.Version;
 import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.social.weibo.api.ApiRateLimit;
 import org.springframework.social.weibo.api.Comment;
+import org.springframework.social.weibo.api.Favorite;
+import org.springframework.social.weibo.api.Favorite.Tag;
 import org.springframework.social.weibo.api.RateLimitStatus;
 import org.springframework.social.weibo.api.Status;
 import org.springframework.social.weibo.api.WeiboProfile;
+import org.springframework.social.weibo.api.impl.json.FavoriteMixin.TagMixin;
 
 public class WeiboModule extends SimpleModule {
 
@@ -37,6 +40,8 @@ public class WeiboModule extends SimpleModule {
 		context.setMixInAnnotations(ApiRateLimit.class, ApiRateLimitMixin.class);
 		context.setMixInAnnotations(RateLimitStatus.class,
 				RateLimitStatusMixin.class);
+		context.setMixInAnnotations(Favorite.class, FavoriteMixin.class);
+		context.setMixInAnnotations(Tag.class, TagMixin.class);
 	}
 
 }
