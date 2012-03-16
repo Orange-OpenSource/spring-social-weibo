@@ -15,6 +15,8 @@
  */
 package org.springframework.social.weibo.api;
 
+import java.util.List;
+
 import org.springframework.social.weibo.api.Favorite.Tag;
 
 public interface FavoriteOperations {
@@ -22,6 +24,8 @@ public interface FavoriteOperations {
 	Favorite createFavorite(long statusId);
 
 	Favorite deleteFavorite(long statusId);
+
+	boolean deleteFavorites(List<Long> statusIds);
 
 	Favorite getFavorite(long id);
 

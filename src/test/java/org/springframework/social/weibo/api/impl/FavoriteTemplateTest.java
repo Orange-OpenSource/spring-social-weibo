@@ -16,6 +16,7 @@
 package org.springframework.social.weibo.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.http.HttpMethod.POST;
 import static org.springframework.social.test.client.RequestMatchers.body;
@@ -24,6 +25,7 @@ import static org.springframework.social.test.client.RequestMatchers.method;
 import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
+import java.util.Arrays;
 import java.util.List;
 
 import org.junit.Test;
@@ -40,6 +42,40 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 	public void setUp() {
 		favoriteTemplate = new FavoriteTemplate(getObjectMapper(),
 				getRestTemplate(), true);
+	}
+
+	@Test
+	public void testCreateFavorite() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/create.json"))
+				.andExpect(method(POST))
+				.andExpect(body("id=1"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("favorite"), responseHeaders));
+		verifyFavorite(favoriteTemplate.createFavorite(1));
+	}
+
+	@Test
+	public void testDeleteFavorite() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/destroy.json"))
+				.andExpect(method(POST))
+				.andExpect(body("id=1"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("favorite"), responseHeaders));
+		verifyFavorite(favoriteTemplate.deleteFavorite(1));
+	}
+
+	@Test
+	public void testDeleteFavorites() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/destroy_batch.json"))
+				.andExpect(method(POST)).andExpect(body("ids=1%2C2%2C3"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(withResponse("{\"result\":true}", responseHeaders));
+		assertTrue(favoriteTemplate.deleteFavorites(Arrays.asList(1L, 2L, 3L)));
 	}
 
 	@Test
@@ -63,6 +99,40 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse(jsonResource("cursoredFavorites"),
 								responseHeaders));
 		CursoredList<Favorite> cursoredList = favoriteTemplate.getFavorites();
+		assertEquals(16, cursoredList.getTotalNumber());
+		assertEquals(2, cursoredList.size());
+		Favorite firstFavorite = cursoredList.iterator().next();
+		verifyFavorite(firstFavorite);
+	}
+
+	@Test
+	public void testGetFavoritesByTag() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/by_tags.json?tid=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("cursoredFavorites"),
+								responseHeaders));
+		CursoredList<Favorite> cursoredList = favoriteTemplate
+				.getFavoritesByTag(1);
+		assertEquals(16, cursoredList.getTotalNumber());
+		assertEquals(2, cursoredList.size());
+		Favorite firstFavorite = cursoredList.iterator().next();
+		verifyFavorite(firstFavorite);
+	}
+
+	@Test
+	public void testGetFavoritesByTagPagination() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/by_tags.json?tid=1&count=20&page=5"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("cursoredFavorites"),
+								responseHeaders));
+		CursoredList<Favorite> cursoredList = favoriteTemplate
+				.getFavoritesByTag(1, 20, 5);
 		assertEquals(16, cursoredList.getTotalNumber());
 		assertEquals(2, cursoredList.size());
 		Favorite firstFavorite = cursoredList.iterator().next();
@@ -130,64 +200,4 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals("80后", firstTag.getValue());
 		assertEquals(25369, firstTag.getCount());
 	}
-
-	@Test
-	public void testGetFavoritesByTag() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/favorites/by_tags.json?tid=1"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("cursoredFavorites"),
-								responseHeaders));
-		CursoredList<Favorite> cursoredList = favoriteTemplate
-				.getFavoritesByTag(1);
-		assertEquals(16, cursoredList.getTotalNumber());
-		assertEquals(2, cursoredList.size());
-		Favorite firstFavorite = cursoredList.iterator().next();
-		verifyFavorite(firstFavorite);
-	}
-
-	@Test
-	public void testGetFavoritesByTagPagination() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/favorites/by_tags.json?tid=1&count=20&page=5"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("cursoredFavorites"),
-								responseHeaders));
-		CursoredList<Favorite> cursoredList = favoriteTemplate
-				.getFavoritesByTag(1, 20, 5);
-		assertEquals(16, cursoredList.getTotalNumber());
-		assertEquals(2, cursoredList.size());
-		Favorite firstFavorite = cursoredList.iterator().next();
-		verifyFavorite(firstFavorite);
-	}
-
-	@Test
-	public void testCreateFavorite() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/favorites/create.json"))
-				.andExpect(method(POST))
-				.andExpect(body("id=1"))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("favorite"), responseHeaders));
-		verifyFavorite(favoriteTemplate.createFavorite(1));
-	}
-
-	@Test
-	public void testDeleteFavorite() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/favorites/destroy.json"))
-				.andExpect(method(POST))
-				.andExpect(body("id=1"))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("favorite"), responseHeaders));
-		verifyFavorite(favoriteTemplate.deleteFavorite(1));
-
-	}
-
 }

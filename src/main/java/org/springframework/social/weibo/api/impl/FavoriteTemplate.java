@@ -15,12 +15,15 @@
  */
 package org.springframework.social.weibo.api.impl;
 
+import java.util.List;
+
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Favorite;
 import org.springframework.social.weibo.api.Favorite.Tag;
 import org.springframework.social.weibo.api.FavoriteOperations;
+import org.springframework.social.weibo.util.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
@@ -31,6 +34,38 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 	protected FavoriteTemplate(ObjectMapper objectMapper,
 			RestTemplate restTemplate, boolean isAuthorized) {
 		super(objectMapper, restTemplate, isAuthorized);
+	}
+
+	@Override
+	public Favorite createFavorite(long statusId) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("id", String.valueOf(statusId));
+		return restTemplate.postForObject(buildUri("favorites/create.json"),
+				request, Favorite.class);
+	}
+
+	@Override
+	public Favorite deleteFavorite(long statusId) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("id", String.valueOf(statusId));
+		return restTemplate.postForObject(buildUri("favorites/destroy.json"),
+				request, Favorite.class);
+	}
+
+	@Override
+	public boolean deleteFavorites(List<Long> statusId) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("ids", StringUtils.join(statusId));
+		JsonNode jsonNode = restTemplate.postForObject(
+				buildUri("favorites/destroy_batch.json"), request,
+				JsonNode.class);
+		return jsonNode.get("result").asBoolean();
 	}
 
 	@Override
@@ -101,26 +136,6 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 								.queryParam("page", String.valueOf(pageNumber))
 								.build(), JsonNode.class);
 		return deserializeCursoredList(jsonNode, Tag.class, "tags");
-	}
-
-	@Override
-	public Favorite createFavorite(long statusId) {
-		requireAuthorization();
-		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
-				1);
-		request.add("id", String.valueOf(statusId));
-		return restTemplate.postForObject(buildUri("favorites/create.json"),
-				request, Favorite.class);
-	}
-
-	@Override
-	public Favorite deleteFavorite(long statusId) {
-		requireAuthorization();
-		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
-				1);
-		request.add("id", String.valueOf(statusId));
-		return restTemplate.postForObject(buildUri("favorites/destroy.json"),
-				request, Favorite.class);
 	}
 
 }
