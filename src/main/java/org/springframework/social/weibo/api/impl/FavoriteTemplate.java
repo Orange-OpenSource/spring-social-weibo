@@ -53,8 +53,9 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 
 	@Override
 	public Favorite getFavorite(long id) {
-		// TODO Auto-generated method stub
-		return null;
+		requireAuthorization();
+		return restTemplate.getForObject(uriBuilder("favorites/show.json")
+				.queryParam("id", String.valueOf(id)).build(), Favorite.class);
 	}
 
 	@Override

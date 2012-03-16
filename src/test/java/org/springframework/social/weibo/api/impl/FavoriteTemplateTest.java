@@ -34,6 +34,23 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 
 	private FavoriteTemplate favoriteTemplate;
 
+	@Override
+	public void setUp() {
+		favoriteTemplate = new FavoriteTemplate(getObjectMapper(),
+				getRestTemplate(), true);
+	}
+
+	@Test
+	public void testGetFavorite() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/show.json?id=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("favorite"), responseHeaders));
+		verifyFavorite(favoriteTemplate.getFavorite(1));
+	}
+
 	@Test
 	public void testGetFavorites() {
 		mockServer
@@ -47,11 +64,16 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(16, cursoredList.getTotalNumber());
 		assertEquals(2, cursoredList.size());
 		Favorite firstFavorite = cursoredList.iterator().next();
-		List<Tag> tags = firstFavorite.getTags();
+		verifyFavorite(firstFavorite);
+	}
+
+	private void verifyFavorite(Favorite favorite) {
+		List<Tag> tags = favorite.getTags();
 		assertEquals(2, tags.size());
 		Tag firstTag = tags.iterator().next();
 		verifyTag(firstTag);
-		StatusMatcher.verifyStatus(firstFavorite.getStatus());
+		assertEquals(1306998976000L, favorite.getFavoritedTime().getTime());
+		StatusMatcher.verifyStatus(favorite.getStatus());
 	}
 
 	@Test
@@ -68,23 +90,13 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(16, cursoredList.getTotalNumber());
 		assertEquals(2, cursoredList.size());
 		Favorite firstFavorite = cursoredList.iterator().next();
-		List<Tag> tags = firstFavorite.getTags();
-		assertEquals(2, tags.size());
-		Tag firstTag = tags.iterator().next();
-		verifyTag(firstTag);
-		StatusMatcher.verifyStatus(firstFavorite.getStatus());
+		verifyFavorite(firstFavorite);
 	}
 
 	private void verifyTag(Tag firstTag) {
 		assertEquals(23, firstTag.getId());
 		assertEquals("80后", firstTag.getValue());
 		assertEquals(25369, firstTag.getCount());
-	}
-
-	@Override
-	public void setUp() {
-		favoriteTemplate = new FavoriteTemplate(getObjectMapper(),
-				getRestTemplate(), true);
 	}
 
 }
