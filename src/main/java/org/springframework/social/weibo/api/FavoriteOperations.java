@@ -21,7 +21,7 @@ import org.springframework.social.weibo.api.Favorite.Tag;
 
 public interface FavoriteOperations {
 
-	Favorite createFavorite(long statusId);
+	Favorite createFavorite(long id);
 
 	Favorite deleteFavorite(long id);
 

@@ -37,11 +37,11 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 	}
 
 	@Override
-	public Favorite createFavorite(long statusId) {
+	public Favorite createFavorite(long id) {
 		requireAuthorization();
 		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
 				1);
-		request.add("id", String.valueOf(statusId));
+		request.add("id", String.valueOf(id));
 		return restTemplate.postForObject(buildUri("favorites/create.json"),
 				request, Favorite.class);
 	}
