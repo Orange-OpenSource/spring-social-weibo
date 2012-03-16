@@ -23,6 +23,8 @@ public interface Weibo {
 
 	FriendOperations friendOperations();
 
+	FavoriteOperations favoriteOperations();
+
 	TimelineOperations timelineOperations();
 
 	UserOperations userOperations();
