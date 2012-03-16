@@ -138,4 +138,16 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 		return deserializeCursoredList(jsonNode, Tag.class, "tags");
 	}
 
+	@Override
+	public Favorite updateTags(long id, List<String> tags) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				2);
+		request.add("id", String.valueOf(id));
+		request.add("tags", StringUtils.join(tags));
+		return restTemplate
+				.postForObject(buildUri("favorites/tags/update.json"), request,
+						Favorite.class);
+	}
+
 }

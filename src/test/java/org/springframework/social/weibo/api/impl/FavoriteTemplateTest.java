@@ -186,6 +186,18 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		verifyTag(cursoredList.iterator().next());
 	}
 
+	@Test
+	public void testUpdateTags() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/tags/update.json"))
+				.andExpect(method(POST))
+				.andExpect(body("id=1&tags=%E5%A5%BD%2C%E6%BC%82%E4%BA%AE"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("favorite"), responseHeaders));
+		verifyFavorite(favoriteTemplate.updateTags(1, Arrays.asList("好", "漂亮")));
+	}
+
 	private void verifyFavorite(Favorite favorite) {
 		List<Tag> tags = favorite.getTags();
 		assertEquals(2, tags.size());

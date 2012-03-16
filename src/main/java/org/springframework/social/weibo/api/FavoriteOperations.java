@@ -42,4 +42,6 @@ public interface FavoriteOperations {
 
 	CursoredList<Tag> getTags(int pageSize, int pageNumber);
 
+	Favorite updateTags(long id, List<String> tags);
+
 }
