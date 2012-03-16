@@ -17,6 +17,8 @@ package org.springframework.social.weibo.api.impl;
 
 import static org.junit.Assert.assertEquals;
 import static org.springframework.http.HttpMethod.GET;
+import static org.springframework.http.HttpMethod.POST;
+import static org.springframework.social.test.client.RequestMatchers.body;
 import static org.springframework.social.test.client.RequestMatchers.header;
 import static org.springframework.social.test.client.RequestMatchers.method;
 import static org.springframework.social.test.client.RequestMatchers.requestTo;
@@ -161,6 +163,18 @@ public class FavoriteTemplateTest extends AbstractWeiboOperationsTest {
 		assertEquals(2, cursoredList.size());
 		Favorite firstFavorite = cursoredList.iterator().next();
 		verifyFavorite(firstFavorite);
+	}
+
+	@Test
+	public void testCreateFavorite() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/favorites/create.json"))
+				.andExpect(method(POST))
+				.andExpect(body("id=1"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("favorite"), responseHeaders));
+		verifyFavorite(favoriteTemplate.createFavorite(1));
 	}
 
 }

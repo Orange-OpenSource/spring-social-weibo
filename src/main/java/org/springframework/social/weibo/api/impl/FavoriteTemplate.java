@@ -21,6 +21,8 @@ import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Favorite;
 import org.springframework.social.weibo.api.Favorite.Tag;
 import org.springframework.social.weibo.api.FavoriteOperations;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class FavoriteTemplate extends AbstractWeiboOperations implements
@@ -99,6 +101,16 @@ public class FavoriteTemplate extends AbstractWeiboOperations implements
 								.queryParam("page", String.valueOf(pageNumber))
 								.build(), JsonNode.class);
 		return deserializeCursoredList(jsonNode, Tag.class, "tags");
+	}
+
+	@Override
+	public Favorite createFavorite(long statusId) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("id", String.valueOf(statusId));
+		return restTemplate.postForObject(buildUri("favorites/create.json"),
+				request, Favorite.class);
 	}
 
 }
