@@ -15,20 +15,55 @@
  */
 package org.springframework.social.weibo.api;
 
-public interface Weibo {
+public class UserTrend {
 
-	AccountOperations accountOperations();
+	private long id;
+	private String num;
+	private String hotword;
 
-	CommentOperations commentOperations();
+	/**
+	 * @return the id
+	 */
+	public long getId() {
+		return id;
+	}
 
-	FriendOperations friendOperations();
+	/**
+	 * @param id
+	 *            the id to set
+	 */
+	public void setId(long id) {
+		this.id = id;
+	}
 
-	FavoriteOperations favoriteOperations();
+	/**
+	 * @return the num
+	 */
+	public String getNum() {
+		return num;
+	}
 
-	TimelineOperations timelineOperations();
+	/**
+	 * @param num
+	 *            the num to set
+	 */
+	public void setNum(String num) {
+		this.num = num;
+	}
 
-	UserOperations userOperations();
+	/**
+	 * @return the hotword
+	 */
+	public String getHotword() {
+		return hotword;
+	}
 
-	TrendOperations trendOperations();
+	/**
+	 * @param hotword
+	 *            the hotword to set
+	 */
+	public void setHotword(String hotword) {
+		this.hotword = hotword;
+	}
 
 }

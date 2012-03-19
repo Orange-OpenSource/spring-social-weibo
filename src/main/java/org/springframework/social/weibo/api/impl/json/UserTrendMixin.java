@@ -13,22 +13,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.social.weibo.api;
+package org.springframework.social.weibo.api.impl.json;
 
-public interface Weibo {
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-	AccountOperations accountOperations();
+/**
+ * Annotated mixin to add Jackson annotations to UserTrend.
+ * 
+ * @author edva8332
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+abstract class UserTrendMixin {
 
-	CommentOperations commentOperations();
-
-	FriendOperations friendOperations();
-
-	FavoriteOperations favoriteOperations();
-
-	TimelineOperations timelineOperations();
-
-	UserOperations userOperations();
-
-	TrendOperations trendOperations();
+	String num;
+	String hotword;
+	@JsonProperty("trend_id")
+	long id;
 
 }

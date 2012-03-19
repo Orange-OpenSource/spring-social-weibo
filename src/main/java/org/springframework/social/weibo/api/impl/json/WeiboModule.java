@@ -23,6 +23,7 @@ import org.springframework.social.weibo.api.Favorite;
 import org.springframework.social.weibo.api.Favorite.Tag;
 import org.springframework.social.weibo.api.RateLimitStatus;
 import org.springframework.social.weibo.api.Status;
+import org.springframework.social.weibo.api.UserTrend;
 import org.springframework.social.weibo.api.WeiboProfile;
 import org.springframework.social.weibo.api.impl.json.FavoriteMixin.TagMixin;
 
@@ -42,6 +43,7 @@ public class WeiboModule extends SimpleModule {
 				RateLimitStatusMixin.class);
 		context.setMixInAnnotations(Favorite.class, FavoriteMixin.class);
 		context.setMixInAnnotations(Tag.class, TagMixin.class);
+		context.setMixInAnnotations(UserTrend.class, UserTrendMixin.class);
 	}
 
 }

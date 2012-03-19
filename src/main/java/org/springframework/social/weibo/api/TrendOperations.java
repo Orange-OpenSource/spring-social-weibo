@@ -15,20 +15,12 @@
  */
 package org.springframework.social.weibo.api;
 
-public interface Weibo {
+import java.util.List;
 
-	AccountOperations accountOperations();
+public interface TrendOperations {
 
-	CommentOperations commentOperations();
+	List<UserTrend> getTrends(long userId);
 
-	FriendOperations friendOperations();
-
-	FavoriteOperations favoriteOperations();
-
-	TimelineOperations timelineOperations();
-
-	UserOperations userOperations();
-
-	TrendOperations trendOperations();
+	List<UserTrend> getTrends(long userId, int pageSize, int pageNumber);
 
 }

@@ -35,6 +35,7 @@ import org.springframework.social.weibo.api.CommentOperations;
 import org.springframework.social.weibo.api.FavoriteOperations;
 import org.springframework.social.weibo.api.FriendOperations;
 import org.springframework.social.weibo.api.TimelineOperations;
+import org.springframework.social.weibo.api.TrendOperations;
 import org.springframework.social.weibo.api.UserOperations;
 import org.springframework.social.weibo.api.Weibo;
 import org.springframework.social.weibo.api.impl.json.WeiboModule;
@@ -55,6 +56,8 @@ public class WeiboTemplate extends AbstractOAuth2ApiBinding implements Weibo {
 	private ObjectMapper objectMapper;
 
 	private FavoriteTemplate favouriteOperations;
+
+	private TrendTemplate trendOperations;
 
 	public WeiboTemplate(String accessToken) {
 		super(accessToken);
@@ -122,6 +125,8 @@ public class WeiboTemplate extends AbstractOAuth2ApiBinding implements Weibo {
 				getRestTemplate(), isAuthorized());
 		this.favouriteOperations = new FavoriteTemplate(objectMapper,
 				getRestTemplate(), isAuthorized());
+		this.trendOperations = new TrendTemplate(objectMapper,
+				getRestTemplate(), isAuthorized());
 	}
 
 	@Override
@@ -161,6 +166,11 @@ public class WeiboTemplate extends AbstractOAuth2ApiBinding implements Weibo {
 	@Override
 	public FavoriteOperations favoriteOperations() {
 		return favouriteOperations;
+	}
+
+	@Override
+	public TrendOperations trendOperations() {
+		return trendOperations;
 	}
 
 }
