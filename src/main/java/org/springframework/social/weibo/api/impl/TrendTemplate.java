@@ -19,6 +19,7 @@ import java.util.List;
 
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
+import org.springframework.social.weibo.api.FollowedTrend;
 import org.springframework.social.weibo.api.TrendOperations;
 import org.springframework.social.weibo.api.UserTrend;
 import org.springframework.web.client.RestTemplate;
@@ -51,5 +52,12 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 								.queryParam("page", String.valueOf(pageNumber))
 								.build(), JsonNode.class);
 		return deserializeDataList(jsonNode, UserTrend.class);
+	}
+
+	@Override
+	public FollowedTrend isFollowed(String trendName) {
+		return restTemplate.getForObject(
+				buildUri("trends/is_follow.json", "trend_name", trendName),
+				FollowedTrend.class);
 	}
 }

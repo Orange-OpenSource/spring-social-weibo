@@ -13,16 +13,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.social.weibo.api;
+package org.springframework.social.weibo.api.impl.json;
 
-import java.util.List;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-public interface TrendOperations {
+/**
+ * Annotated mixin to add Jackson annotations to FollowedTrend.
+ * 
+ * @author edva8332
+ */
+abstract class FollowedTrendMixin {
 
-	List<UserTrend> getTrends(long userId);
-
-	List<UserTrend> getTrends(long userId, int pageSize, int pageNumber);
-
-	FollowedTrend isFollowed(String trendName);
+	@JsonProperty("trend_id")
+	long trendId;
+	@JsonProperty("is_follow")
+	boolean followed;
 
 }

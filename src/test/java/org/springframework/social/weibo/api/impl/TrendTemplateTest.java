@@ -16,6 +16,7 @@
 package org.springframework.social.weibo.api.impl;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 import static org.springframework.http.HttpMethod.GET;
 import static org.springframework.social.test.client.RequestMatchers.header;
 import static org.springframework.social.test.client.RequestMatchers.method;
@@ -25,6 +26,7 @@ import static org.springframework.social.test.client.ResponseCreators.withRespon
 import java.util.List;
 
 import org.junit.Test;
+import org.springframework.social.weibo.api.FollowedTrend;
 import org.springframework.social.weibo.api.UserTrend;
 
 public class TrendTemplateTest extends AbstractWeiboOperationsTest {
@@ -71,6 +73,21 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 	public void setUp() {
 		trendTemplate = new TrendTemplate(getObjectMapper(), getRestTemplate(),
 				true);
+	}
+
+	@Test
+	public void testIsFollowed() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/is_follow.json?trend_name=%E8%8B%B9%E6%9E%9C"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(
+								"{\"trend_id\":123456,\"is_follow\":true}",
+								responseHeaders));
+		FollowedTrend followedTrend = trendTemplate.isFollowed("苹果");
+		assertEquals(123456, followedTrend.getTrendId());
+		assertTrue(followedTrend.isFollowed());
 	}
 
 }

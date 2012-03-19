@@ -15,14 +15,39 @@
  */
 package org.springframework.social.weibo.api;
 
-import java.util.List;
+public class FollowedTrend {
 
-public interface TrendOperations {
+	private long trendId;
+	private boolean followed;
 
-	List<UserTrend> getTrends(long userId);
+	/**
+	 * @return the trendId
+	 */
+	public long getTrendId() {
+		return trendId;
+	}
 
-	List<UserTrend> getTrends(long userId, int pageSize, int pageNumber);
+	/**
+	 * @param trendId
+	 *            the trendId to set
+	 */
+	public void setTrendId(long trendId) {
+		this.trendId = trendId;
+	}
 
-	FollowedTrend isFollowed(String trendName);
+	/**
+	 * @return the followed
+	 */
+	public boolean isFollowed() {
+		return followed;
+	}
+
+	/**
+	 * @param followed
+	 *            the followed to set
+	 */
+	public void setFollowed(boolean followed) {
+		this.followed = followed;
+	}
 
 }
