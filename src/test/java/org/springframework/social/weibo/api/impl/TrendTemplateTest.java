@@ -24,9 +24,13 @@ import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
 import java.util.List;
+import java.util.SortedSet;
 
 import org.junit.Test;
 import org.springframework.social.weibo.api.FollowedTrend;
+import org.springframework.social.weibo.api.Trends;
+import org.springframework.social.weibo.api.Trends.Trend;
+import org.springframework.social.weibo.api.TrendsWrapper;
 import org.springframework.social.weibo.api.UserTrend;
 
 public class TrendTemplateTest extends AbstractWeiboOperationsTest {
@@ -90,4 +94,48 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 		assertTrue(followedTrend.isFollowed());
 	}
 
+	@Test
+	public void testGetHourlyTrends() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/hourly.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hourlyTrends"),
+								responseHeaders));
+		TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends();
+		assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
+		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
+		assertEquals(2, trendsSet.size());
+		Trends trends = trendsSet.iterator().next();
+		assertEquals(1306809992000L, trends.getDate().getTime());
+		Trend firstTrend = trends.getTrends().iterator().next();
+		assertEquals(123, firstTrend.getAmount());
+		assertEquals(0, firstTrend.getDelta());
+		assertEquals("苹果", firstTrend.getName());
+		assertEquals("苹果", firstTrend.getQuery());
+	}
+
+	@Test
+	public void testGetHourlyTrendsFilteredByApplication() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/hourly.json?base_app=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("hourlyTrends"),
+								responseHeaders));
+		TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends(true);
+		assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
+		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
+		assertEquals(2, trendsSet.size());
+		Trends trends = trendsSet.iterator().next();
+		assertEquals(1306809992000L, trends.getDate().getTime());
+		Trend firstTrend = trends.getTrends().iterator().next();
+		assertEquals(123, firstTrend.getAmount());
+		assertEquals(0, firstTrend.getDelta());
+		assertEquals("苹果", firstTrend.getName());
+		assertEquals("苹果", firstTrend.getQuery());
+
+	}
 }

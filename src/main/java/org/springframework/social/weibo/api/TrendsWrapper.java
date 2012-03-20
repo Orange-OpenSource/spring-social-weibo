@@ -15,18 +15,43 @@
  */
 package org.springframework.social.weibo.api;
 
-import java.util.List;
+import java.util.Date;
+import java.util.SortedSet;
 
-public interface TrendOperations {
+public class TrendsWrapper {
 
-	List<UserTrend> getTrends(long userId);
+	private SortedSet<Trends> trends;
 
-	List<UserTrend> getTrends(long userId, int pageSize, int pageNumber);
+	private Date asOf;
 
-	FollowedTrend isFollowed(String trendName);
+	/**
+	 * @return the trends
+	 */
+	public SortedSet<Trends> getTrends() {
+		return trends;
+	}
 
-	TrendsWrapper getHourlyTrends();
+	/**
+	 * @param trends
+	 *            the trends to set
+	 */
+	public void setTrends(SortedSet<Trends> trends) {
+		this.trends = trends;
+	}
 
-	TrendsWrapper getHourlyTrends(boolean onlyApplicationData);
+	/**
+	 * @return the asOf
+	 */
+	public Date getAsOf() {
+		return asOf;
+	}
+
+	/**
+	 * @param asOf
+	 *            the asOf to set
+	 */
+	public void setAsOf(Date asOf) {
+		this.asOf = asOf;
+	}
 
 }

@@ -21,7 +21,9 @@ import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.FollowedTrend;
 import org.springframework.social.weibo.api.TrendOperations;
+import org.springframework.social.weibo.api.TrendsWrapper;
 import org.springframework.social.weibo.api.UserTrend;
+import org.springframework.social.weibo.util.StringUtils;
 import org.springframework.web.client.RestTemplate;
 
 public class TrendTemplate extends AbstractWeiboOperations implements
@@ -59,5 +61,19 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 		return restTemplate.getForObject(
 				buildUri("trends/is_follow.json", "trend_name", trendName),
 				FollowedTrend.class);
+	}
+
+	@Override
+	public TrendsWrapper getHourlyTrends() {
+		return restTemplate.getForObject(buildUri("trends/hourly.json"),
+				TrendsWrapper.class);
+	}
+
+	@Override
+	public TrendsWrapper getHourlyTrends(boolean onlyApplicationData) {
+		return restTemplate.getForObject(
+				buildUri("trends/hourly.json", "base_app",
+						StringUtils.booleanToString(onlyApplicationData)),
+				TrendsWrapper.class);
 	}
 }

@@ -13,20 +13,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.springframework.social.weibo.api;
+package org.springframework.social.weibo.api.impl.json;
 
-import java.util.List;
+import java.util.Date;
+import java.util.SortedSet;
 
-public interface TrendOperations {
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.map.annotate.JsonDeserialize;
+import org.springframework.social.weibo.api.Trends.Trend;
 
-	List<UserTrend> getTrends(long userId);
+/**
+ * Annotated mixin to add Jackson annotations to TrendsWrapper.
+ * 
+ * @author edva8332
+ */
+@JsonIgnoreProperties(ignoreUnknown = true)
+abstract class TrendsWrapperMixin {
 
-	List<UserTrend> getTrends(long userId, int pageSize, int pageNumber);
+	@JsonProperty("trends")
+	@JsonDeserialize(using = TrendsDeserializer.class)
+	SortedSet<Trend> trends;
 
-	FollowedTrend isFollowed(String trendName);
-
-	TrendsWrapper getHourlyTrends();
-
-	TrendsWrapper getHourlyTrends(boolean onlyApplicationData);
+	@JsonProperty("as_of")
+	Date asOf;
 
 }
