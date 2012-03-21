@@ -26,9 +26,9 @@ import org.codehaus.jackson.JsonProcessingException;
 import org.codehaus.jackson.map.DeserializationContext;
 import org.codehaus.jackson.map.JsonDeserializer;
 
-public class DateDeserializer extends JsonDeserializer<Date> {
+public class DateFormatDeserializer extends JsonDeserializer<Date> {
 
-	public DateDeserializer() {
+	public DateFormatDeserializer() {
 		super();
 	}
 

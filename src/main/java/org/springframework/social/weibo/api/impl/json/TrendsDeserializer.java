@@ -61,8 +61,7 @@ public class TrendsDeserializer extends JsonDeserializer<SortedSet<Trends>> {
 	public SortedSet<Trends> deserialize(JsonParser jp,
 			DeserializationContext ctxt) throws IOException,
 			JsonProcessingException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat(
-				"yyyy-MM-dd HH:mm:ss");
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
 		dateFormat.setLenient(true);
 		TreeSet<Trends> result = new TreeSet<Trends>(comparator);
 		for (Iterator<Entry<String, JsonNode>> iterator = jp.readValueAsTree()
@@ -71,18 +70,18 @@ public class TrendsDeserializer extends JsonDeserializer<SortedSet<Trends>> {
 			Trends trends = new Trends();
 			try {
 				trends.setDate(dateFormat.parse(next.getKey()));
+				JsonNode trendsNode = next.getValue();
+				for (Iterator<JsonNode> iterator2 = trendsNode.getElements(); iterator2
+						.hasNext();) {
+					JsonParser nodeParser = iterator2.next().traverse();
+					nodeParser.setCodec(jp.getCodec());
+					Trend readValueAs = nodeParser.readValueAs(Trend.class);
+					trends.getTrends().add(readValueAs);
+				}
+				result.add(trends);
 			} catch (ParseException e) {
 				logger.warn("Unable to parse date", e);
 			}
-			JsonNode trendsNode = next.getValue();
-			for (Iterator<JsonNode> iterator2 = trendsNode.getElements(); iterator2
-					.hasNext();) {
-				JsonParser nodeParser = iterator2.next().traverse();
-				nodeParser.setCodec(jp.getCodec());
-				Trend readValueAs = nodeParser.readValueAs(Trend.class);
-				trends.getTrends().add(readValueAs);
-			}
-			result.add(trends);
 		}
 		return result;
 	}

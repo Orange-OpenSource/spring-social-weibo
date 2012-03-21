@@ -15,28 +15,22 @@
  */
 package org.springframework.social.weibo.api.impl.json;
 
+import java.io.IOException;
 import java.util.Date;
-import java.util.SortedSet;
 
-import org.codehaus.jackson.annotate.JsonIgnoreProperties;
-import org.codehaus.jackson.annotate.JsonProperty;
-import org.codehaus.jackson.map.annotate.JsonDeserialize;
-import org.springframework.social.weibo.api.Trends.Trend;
+import org.codehaus.jackson.JsonParser;
+import org.codehaus.jackson.JsonProcessingException;
+import org.codehaus.jackson.map.DeserializationContext;
+import org.codehaus.jackson.map.JsonDeserializer;
 
-/**
- * Annotated mixin to add Jackson annotations to TrendsWrapper.
- * 
- * @author edva8332
- */
-@JsonIgnoreProperties(ignoreUnknown = true)
-abstract class TrendsWrapperMixin {
+public class DateInSecondsDeserializer extends JsonDeserializer<Date> {
 
-	@JsonProperty("trends")
-	@JsonDeserialize(using = TrendsDeserializer.class)
-	SortedSet<Trend> trends;
+	private static final int MILLISECONDS = 1000;
 
-	@JsonProperty("as_of")
-	@JsonDeserialize(using = DateInSecondsDeserializer.class)
-	Date asOf;
+	@Override
+	public Date deserialize(JsonParser jp, DeserializationContext ctxt)
+			throws IOException, JsonProcessingException {
+		return new Date(jp.getLongValue() * MILLISECONDS);
+	}
 
 }

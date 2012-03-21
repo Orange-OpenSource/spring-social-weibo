@@ -36,7 +36,7 @@ class RateLimitStatusMixin {
 	@JsonProperty("remaining_user_hits")
 	int remainingUserHits;
 	@JsonProperty("reset_time")
-	@JsonDeserialize(using = DateDeserializer.class)
+	@JsonDeserialize(using = DateFormatDeserializer.class)
 	Date resetTime;
 	@JsonProperty("reset_time_in_seconds")
 	int resetTimeInSeconds;

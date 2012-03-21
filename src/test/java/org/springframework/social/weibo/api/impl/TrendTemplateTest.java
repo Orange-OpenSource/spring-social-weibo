@@ -108,7 +108,7 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
 		assertEquals(2, trendsSet.size());
 		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809992000L, trends.getDate().getTime());
+		assertEquals(1306809960000L, trends.getDate().getTime());
 		Trend firstTrend = trends.getTrends().iterator().next();
 		assertEquals(123, firstTrend.getAmount());
 		assertEquals(0, firstTrend.getDelta());
