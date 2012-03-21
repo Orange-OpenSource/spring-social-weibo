@@ -61,14 +61,15 @@ public class TrendsDeserializer extends JsonDeserializer<SortedSet<Trends>> {
 	public SortedSet<Trends> deserialize(JsonParser jp,
 			DeserializationContext ctxt) throws IOException,
 			JsonProcessingException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm");
-		dateFormat.setLenient(true);
+		SimpleDateFormat dateFormat = new SimpleDateFormat();
 		TreeSet<Trends> result = new TreeSet<Trends>(comparator);
 		for (Iterator<Entry<String, JsonNode>> iterator = jp.readValueAsTree()
 				.getFields(); iterator.hasNext();) {
 			Entry<String, JsonNode> next = iterator.next();
 			Trends trends = new Trends();
 			try {
+				dateFormat
+						.applyPattern(retrieveDateFormatPattern(next.getKey()));
 				trends.setDate(dateFormat.parse(next.getKey()));
 				JsonNode trendsNode = next.getValue();
 				for (Iterator<JsonNode> iterator2 = trendsNode.getElements(); iterator2
@@ -82,6 +83,22 @@ public class TrendsDeserializer extends JsonDeserializer<SortedSet<Trends>> {
 			} catch (ParseException e) {
 				logger.warn("Unable to parse date", e);
 			}
+		}
+		return result;
+	}
+
+	private String retrieveDateFormatPattern(String key) {
+		String result = null;
+		switch (key.length()) {
+		case 19:
+			result = "yyyy-MM-dd HH:mm:ss";
+			break;
+		case 16:
+			result = "yyyy-MM-dd HH:mm";
+			break;
+		default:
+			result = "yyyy-MM-dd";
+			break;
 		}
 		return result;
 	}

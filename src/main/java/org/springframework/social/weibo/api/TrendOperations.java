@@ -19,6 +19,10 @@ import java.util.List;
 
 public interface TrendOperations {
 
+	TrendsWrapper getDailyTrends();
+
+	TrendsWrapper getDailyTrends(boolean onlyApplicationData);
+
 	List<UserTrend> getTrends(long userId);
 
 	List<UserTrend> getTrends(long userId, int pageSize, int pageNumber);

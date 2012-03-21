@@ -130,12 +130,56 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
 		assertEquals(2, trendsSet.size());
 		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809992000L, trends.getDate().getTime());
+		assertEquals(1306809960000L, trends.getDate().getTime());
 		Trend firstTrend = trends.getTrends().iterator().next();
 		assertEquals(123, firstTrend.getAmount());
 		assertEquals(0, firstTrend.getDelta());
 		assertEquals("苹果", firstTrend.getName());
 		assertEquals("苹果", firstTrend.getQuery());
 
+	}
+
+	@Test
+	public void testGetDailyTrends() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/daily.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("dailyTrends"),
+								responseHeaders));
+		TrendsWrapper dailyTrends = trendTemplate.getDailyTrends();
+		assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
+		SortedSet<Trends> trendsSet = dailyTrends.getTrends();
+		assertEquals(2, trendsSet.size());
+		Trends trends = trendsSet.iterator().next();
+		assertEquals(1306684800000L, trends.getDate().getTime());
+		Trend firstTrend = trends.getTrends().iterator().next();
+		assertEquals(123, firstTrend.getAmount());
+		assertEquals(0, firstTrend.getDelta());
+		assertEquals("苹果", firstTrend.getName());
+		assertEquals("苹果", firstTrend.getQuery());
+	}
+
+	@Test
+	public void testGetDailyTrendsFilteredByApplication() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/daily.json?base_app=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("dailyTrends"),
+								responseHeaders));
+		TrendsWrapper dailyTrends = trendTemplate.getDailyTrends(true);
+		assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
+		SortedSet<Trends> trendsSet = dailyTrends.getTrends();
+		assertEquals(2, trendsSet.size());
+		Trends trends = trendsSet.iterator().next();
+		assertEquals(1306684800000L, trends.getDate().getTime());
+		Trend firstTrend = trends.getTrends().iterator().next();
+		assertEquals(123, firstTrend.getAmount());
+		assertEquals(0, firstTrend.getDelta());
+		assertEquals("苹果", firstTrend.getName());
+		assertEquals("苹果", firstTrend.getQuery());
 	}
 }
