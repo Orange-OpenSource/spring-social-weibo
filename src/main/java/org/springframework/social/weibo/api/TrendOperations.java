@@ -39,4 +39,6 @@ public interface TrendOperations {
 
 	TrendsWrapper getWeeklyTrends(boolean onlyApplicationData);
 
+	boolean unfollow(long trendId);
+
 }

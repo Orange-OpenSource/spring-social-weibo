@@ -234,4 +234,14 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 						withResponse("{\"topicid\":1568197}", responseHeaders));
 		assertEquals(1568197, trendTemplate.follow("苹果"));
 	}
+
+	@Test
+	public void testUnfollow() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/destroy.json"))
+				.andExpect(method(POST)).andExpect(body("trend_id=1"))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(withResponse("{\"result\":true}", responseHeaders));
+		assertTrue(trendTemplate.unfollow(1));
+	}
 }

@@ -124,4 +124,15 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 				.postForObject(buildUri("trends/follow.json"), request,
 						JsonNode.class).findValue("topicid").asLong();
 	}
+
+	@Override
+	public boolean unfollow(long trendId) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("trend_id", String.valueOf(trendId));
+		return restTemplate
+				.postForObject(buildUri("trends/destroy.json"), request,
+						JsonNode.class).findValue("result").asBoolean();
+	}
 }
