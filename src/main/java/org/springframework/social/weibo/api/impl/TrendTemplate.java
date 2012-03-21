@@ -90,4 +90,18 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 						StringUtils.booleanToString(onlyApplicationData)),
 				TrendsWrapper.class);
 	}
+
+	@Override
+	public TrendsWrapper getWeeklyTrends() {
+		return restTemplate.getForObject(buildUri("trends/weekly.json"),
+				TrendsWrapper.class);
+	}
+
+	@Override
+	public TrendsWrapper getWeeklyTrends(boolean onlyApplicationData) {
+		return restTemplate.getForObject(
+				buildUri("trends/weekly.json", "base_app",
+						StringUtils.booleanToString(onlyApplicationData)),
+				TrendsWrapper.class);
+	}
 }

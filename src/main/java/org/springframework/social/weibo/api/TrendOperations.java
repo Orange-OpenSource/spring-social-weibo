@@ -33,4 +33,8 @@ public interface TrendOperations {
 
 	TrendsWrapper getHourlyTrends(boolean onlyApplicationData);
 
+	TrendsWrapper getWeeklyTrends();
+
+	TrendsWrapper getWeeklyTrends(boolean onlyApplicationData);
+
 }
