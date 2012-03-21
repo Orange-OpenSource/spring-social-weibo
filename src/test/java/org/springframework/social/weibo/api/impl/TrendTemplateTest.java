@@ -101,8 +101,7 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("hourlyTrends"),
-								responseHeaders));
+						withResponse(jsonResource("trends"), responseHeaders));
 		TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends();
 		assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
 		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
@@ -123,8 +122,7 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("hourlyTrends"),
-								responseHeaders));
+						withResponse(jsonResource("trends"), responseHeaders));
 		TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends(true);
 		assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
 		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
@@ -146,14 +144,13 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("dailyTrends"),
-								responseHeaders));
+						withResponse(jsonResource("trends"), responseHeaders));
 		TrendsWrapper dailyTrends = trendTemplate.getDailyTrends();
 		assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
 		SortedSet<Trends> trendsSet = dailyTrends.getTrends();
 		assertEquals(2, trendsSet.size());
 		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306684800000L, trends.getDate().getTime());
+		assertEquals(1306809960000L, trends.getDate().getTime());
 		Trend firstTrend = trends.getTrends().iterator().next();
 		assertEquals(123, firstTrend.getAmount());
 		assertEquals(0, firstTrend.getDelta());
@@ -168,14 +165,55 @@ public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 				.andExpect(method(GET))
 				.andExpect(header("Authorization", "OAuth2 accessToken"))
 				.andRespond(
-						withResponse(jsonResource("dailyTrends"),
-								responseHeaders));
+						withResponse(jsonResource("trends"), responseHeaders));
 		TrendsWrapper dailyTrends = trendTemplate.getDailyTrends(true);
 		assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
 		SortedSet<Trends> trendsSet = dailyTrends.getTrends();
 		assertEquals(2, trendsSet.size());
 		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306684800000L, trends.getDate().getTime());
+		assertEquals(1306809960000L, trends.getDate().getTime());
+		Trend firstTrend = trends.getTrends().iterator().next();
+		assertEquals(123, firstTrend.getAmount());
+		assertEquals(0, firstTrend.getDelta());
+		assertEquals("苹果", firstTrend.getName());
+		assertEquals("苹果", firstTrend.getQuery());
+	}
+
+	@Test
+	public void testGetWeeklyTrends() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/weekly.json"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("trends"), responseHeaders));
+		TrendsWrapper weeklyTrends = trendTemplate.getWeeklyTrends();
+		assertEquals(1280833537000L, weeklyTrends.getAsOf().getTime());
+		SortedSet<Trends> trendsSet = weeklyTrends.getTrends();
+		assertEquals(2, trendsSet.size());
+		Trends trends = trendsSet.iterator().next();
+		assertEquals(1306809960000L, trends.getDate().getTime());
+		Trend firstTrend = trends.getTrends().iterator().next();
+		assertEquals(123, firstTrend.getAmount());
+		assertEquals(0, firstTrend.getDelta());
+		assertEquals("苹果", firstTrend.getName());
+		assertEquals("苹果", firstTrend.getQuery());
+	}
+
+	@Test
+	public void testGetWeeklyTrendsFilteredByApplication() {
+		mockServer
+				.expect(requestTo("https://api.weibo.com/2/trends/weekly.json?base_app=1"))
+				.andExpect(method(GET))
+				.andExpect(header("Authorization", "OAuth2 accessToken"))
+				.andRespond(
+						withResponse(jsonResource("trends"), responseHeaders));
+		TrendsWrapper weeklyTrends = trendTemplate.getWeeklyTrends(true);
+		assertEquals(1280833537000L, weeklyTrends.getAsOf().getTime());
+		SortedSet<Trends> trendsSet = weeklyTrends.getTrends();
+		assertEquals(2, trendsSet.size());
+		Trends trends = trendsSet.iterator().next();
+		assertEquals(1306809960000L, trends.getDate().getTime());
 		Trend firstTrend = trends.getTrends().iterator().next();
 		assertEquals(123, firstTrend.getAmount());
 		assertEquals(0, firstTrend.getDelta());
