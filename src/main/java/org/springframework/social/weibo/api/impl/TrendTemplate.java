@@ -24,6 +24,8 @@ import org.springframework.social.weibo.api.TrendOperations;
 import org.springframework.social.weibo.api.TrendsWrapper;
 import org.springframework.social.weibo.api.UserTrend;
 import org.springframework.social.weibo.util.StringUtils;
+import org.springframework.util.LinkedMultiValueMap;
+import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
 
 public class TrendTemplate extends AbstractWeiboOperations implements
@@ -110,5 +112,16 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 				buildUri("trends/weekly.json", "base_app",
 						StringUtils.booleanToString(onlyApplicationData)),
 				TrendsWrapper.class);
+	}
+
+	@Override
+	public long follow(String trendName) {
+		requireAuthorization();
+		MultiValueMap<String, String> request = new LinkedMultiValueMap<String, String>(
+				1);
+		request.add("trend_name", trendName);
+		return restTemplate
+				.postForObject(buildUri("trends/follow.json"), request,
+						JsonNode.class).findValue("topicid").asLong();
 	}
 }

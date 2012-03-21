@@ -19,6 +19,8 @@ import java.util.List;
 
 public interface TrendOperations {
 
+	long follow(String trendName);
+
 	TrendsWrapper getDailyTrends();
 
 	TrendsWrapper getDailyTrends(boolean onlyApplicationData);
