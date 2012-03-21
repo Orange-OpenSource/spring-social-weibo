@@ -58,6 +58,7 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 
 	@Override
 	public FollowedTrend isFollowed(String trendName) {
+		requireAuthorization();
 		return restTemplate.getForObject(
 				buildUri("trends/is_follow.json", "trend_name", trendName),
 				FollowedTrend.class);
@@ -65,12 +66,14 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 
 	@Override
 	public TrendsWrapper getHourlyTrends() {
+		requireAuthorization();
 		return restTemplate.getForObject(buildUri("trends/hourly.json"),
 				TrendsWrapper.class);
 	}
 
 	@Override
 	public TrendsWrapper getHourlyTrends(boolean onlyApplicationData) {
+		requireAuthorization();
 		return restTemplate.getForObject(
 				buildUri("trends/hourly.json", "base_app",
 						StringUtils.booleanToString(onlyApplicationData)),
@@ -79,12 +82,14 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 
 	@Override
 	public TrendsWrapper getDailyTrends() {
+		requireAuthorization();
 		return restTemplate.getForObject(buildUri("trends/daily.json"),
 				TrendsWrapper.class);
 	}
 
 	@Override
 	public TrendsWrapper getDailyTrends(boolean onlyApplicationData) {
+		requireAuthorization();
 		return restTemplate.getForObject(
 				buildUri("trends/daily.json", "base_app",
 						StringUtils.booleanToString(onlyApplicationData)),
@@ -93,12 +98,14 @@ public class TrendTemplate extends AbstractWeiboOperations implements
 
 	@Override
 	public TrendsWrapper getWeeklyTrends() {
+		requireAuthorization();
 		return restTemplate.getForObject(buildUri("trends/weekly.json"),
 				TrendsWrapper.class);
 	}
 
 	@Override
 	public TrendsWrapper getWeeklyTrends(boolean onlyApplicationData) {
+		requireAuthorization();
 		return restTemplate.getForObject(
 				buildUri("trends/weekly.json", "base_app",
 						StringUtils.booleanToString(onlyApplicationData)),
