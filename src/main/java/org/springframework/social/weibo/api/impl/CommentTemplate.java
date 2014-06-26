@@ -18,8 +18,6 @@ package org.springframework.social.weibo.api.impl;
 import java.net.URI;
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.AuthorFilterType;
 import org.springframework.social.weibo.api.Comment;
 import org.springframework.social.weibo.api.CommentOperations;
@@ -29,6 +27,9 @@ import org.springframework.social.weibo.util.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 class CommentTemplate extends AbstractWeiboOperations implements
 		CommentOperations {

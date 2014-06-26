@@ -25,8 +25,12 @@ import static org.springframework.social.test.client.RequestMatchers.method;
 import static org.springframework.social.test.client.RequestMatchers.requestTo;
 import static org.springframework.social.test.client.ResponseCreators.withResponse;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.SortedSet;
+import java.util.TimeZone;
 
 import org.junit.Test;
 import org.springframework.social.weibo.api.FollowedTrend;
@@ -37,211 +41,183 @@ import org.springframework.social.weibo.api.UserTrend;
 
 public class TrendTemplateTest extends AbstractWeiboOperationsTest {
 
-	private TrendTemplate trendTemplate;
+    private TrendTemplate trendTemplate;
 
-	@Test
-	public void testGetTrendsPagination() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends.json?uid=1&count=20&page=2"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("userTrends"),
-								responseHeaders));
-		List<UserTrend> trends = trendTemplate.getTrends(1, 20, 2);
-		assertEquals(2, trends.size());
-		UserTrend firstTrend = trends.iterator().next();
-		verifyUserTrend(firstTrend);
-	}
+    @Test
+    public void testGetTrendsPagination() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends.json?uid=1&count=20&page=2"))
+                .andExpect(method(GET)).andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("userTrends"), responseHeaders));
+        List<UserTrend> trends = trendTemplate.getTrends(1, 20, 2);
+        assertEquals(2, trends.size());
+        UserTrend firstTrend = trends.iterator().next();
+        verifyUserTrend(firstTrend);
+    }
 
-	@Test
-	public void testGetTrends() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends.json?uid=1"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("userTrends"),
-								responseHeaders));
-		List<UserTrend> trends = trendTemplate.getTrends(1);
-		assertEquals(2, trends.size());
-		UserTrend firstTrend = trends.iterator().next();
-		verifyUserTrend(firstTrend);
-	}
+    @Test
+    public void testGetTrends() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends.json?uid=1")).andExpect(method(GET))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("userTrends"), responseHeaders));
+        List<UserTrend> trends = trendTemplate.getTrends(1);
+        assertEquals(2, trends.size());
+        UserTrend firstTrend = trends.iterator().next();
+        verifyUserTrend(firstTrend);
+    }
 
-	private void verifyUserTrend(UserTrend userTrend) {
-		assertEquals(1567898, userTrend.getId());
-		assertEquals("苹果", userTrend.getHotword());
-		assertEquals("225673", userTrend.getNum());
-	}
+    private void verifyUserTrend(UserTrend userTrend) {
+        assertEquals(1567898, userTrend.getId());
+        assertEquals("苹果", userTrend.getHotword());
+        assertEquals("225673", userTrend.getNum());
+    }
 
-	@Override
-	public void setUp() {
-		trendTemplate = new TrendTemplate(getObjectMapper(), getRestTemplate(),
-				true);
-	}
+    @Override
+    public void setUp() {
+        trendTemplate = new TrendTemplate(getObjectMapper(), getRestTemplate(), true);
+    }
 
-	@Test
-	public void testIsFollowed() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/is_follow.json?trend_name=%E8%8B%B9%E6%9E%9C"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(
-								"{\"trend_id\":123456,\"is_follow\":true}",
-								responseHeaders));
-		FollowedTrend followedTrend = trendTemplate.isFollowed("苹果");
-		assertEquals(123456, followedTrend.getTrendId());
-		assertTrue(followedTrend.isFollowed());
-	}
+    @Test
+    public void testIsFollowed() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/is_follow.json?trend_name=%E8%8B%B9%E6%9E%9C"))
+                .andExpect(method(GET)).andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse("{\"trend_id\":123456,\"is_follow\":true}", responseHeaders));
+        FollowedTrend followedTrend = trendTemplate.isFollowed("苹果");
+        assertEquals(123456, followedTrend.getTrendId());
+        assertTrue(followedTrend.isFollowed());
+    }
 
-	@Test
-	public void testGetHourlyTrends() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/hourly.json"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("trends"), responseHeaders));
-		TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends();
-		assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
-		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
-		assertEquals(2, trendsSet.size());
-		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809960000L, trends.getDate().getTime());
-		Trend firstTrend = trends.getTrends().iterator().next();
-		assertEquals(123, firstTrend.getAmount());
-		assertEquals(0, firstTrend.getDelta());
-		assertEquals("苹果", firstTrend.getName());
-		assertEquals("苹果", firstTrend.getQuery());
-	}
+    @Test
+    public void testGetHourlyTrends() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/hourly.json")).andExpect(method(GET))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("trends"), responseHeaders));
+        TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends();
+        assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
+        SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
+        assertEquals(2, trendsSet.size());
+        Trends trends = trendsSet.iterator().next();
 
-	@Test
-	public void testGetHourlyTrendsFilteredByApplication() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/hourly.json?base_app=1"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("trends"), responseHeaders));
-		TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends(true);
-		assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
-		SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
-		assertEquals(2, trendsSet.size());
-		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809960000L, trends.getDate().getTime());
-		Trend firstTrend = trends.getTrends().iterator().next();
-		assertEquals(123, firstTrend.getAmount());
-		assertEquals(0, firstTrend.getDelta());
-		assertEquals("苹果", firstTrend.getName());
-		assertEquals("苹果", firstTrend.getQuery());
+        assertEquals(getTestDateInMillis(), trends.getDate().getTime());
+        Trend firstTrend = trends.getTrends().iterator().next();
+        assertEquals(123, firstTrend.getAmount());
+        assertEquals(0, firstTrend.getDelta());
+        assertEquals("苹果", firstTrend.getName());
+        assertEquals("苹果", firstTrend.getQuery());
+    }
 
-	}
+    @Test
+    public void testGetHourlyTrendsFilteredByApplication() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/hourly.json?base_app=1")).andExpect(method(GET))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("trends"), responseHeaders));
+        TrendsWrapper hourlyTrends = trendTemplate.getHourlyTrends(true);
+        assertEquals(1280833537000L, hourlyTrends.getAsOf().getTime());
+        SortedSet<Trends> trendsSet = hourlyTrends.getTrends();
+        assertEquals(2, trendsSet.size());
+        Trends trends = trendsSet.iterator().next();
+        assertEquals(getTestDateInMillis(), trends.getDate().getTime());
+        Trend firstTrend = trends.getTrends().iterator().next();
+        assertEquals(123, firstTrend.getAmount());
+        assertEquals(0, firstTrend.getDelta());
+        assertEquals("苹果", firstTrend.getName());
+        assertEquals("苹果", firstTrend.getQuery());
 
-	@Test
-	public void testGetDailyTrends() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/daily.json"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("trends"), responseHeaders));
-		TrendsWrapper dailyTrends = trendTemplate.getDailyTrends();
-		assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
-		SortedSet<Trends> trendsSet = dailyTrends.getTrends();
-		assertEquals(2, trendsSet.size());
-		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809960000L, trends.getDate().getTime());
-		Trend firstTrend = trends.getTrends().iterator().next();
-		assertEquals(123, firstTrend.getAmount());
-		assertEquals(0, firstTrend.getDelta());
-		assertEquals("苹果", firstTrend.getName());
-		assertEquals("苹果", firstTrend.getQuery());
-	}
+    }
 
-	@Test
-	public void testGetDailyTrendsFilteredByApplication() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/daily.json?base_app=1"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("trends"), responseHeaders));
-		TrendsWrapper dailyTrends = trendTemplate.getDailyTrends(true);
-		assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
-		SortedSet<Trends> trendsSet = dailyTrends.getTrends();
-		assertEquals(2, trendsSet.size());
-		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809960000L, trends.getDate().getTime());
-		Trend firstTrend = trends.getTrends().iterator().next();
-		assertEquals(123, firstTrend.getAmount());
-		assertEquals(0, firstTrend.getDelta());
-		assertEquals("苹果", firstTrend.getName());
-		assertEquals("苹果", firstTrend.getQuery());
-	}
+    @Test
+    public void testGetDailyTrends() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/daily.json")).andExpect(method(GET))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("trends"), responseHeaders));
+        TrendsWrapper dailyTrends = trendTemplate.getDailyTrends();
+        assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
+        SortedSet<Trends> trendsSet = dailyTrends.getTrends();
+        assertEquals(2, trendsSet.size());
+        Trends trends = trendsSet.iterator().next();
 
-	@Test
-	public void testGetWeeklyTrends() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/weekly.json"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("trends"), responseHeaders));
-		TrendsWrapper weeklyTrends = trendTemplate.getWeeklyTrends();
-		assertEquals(1280833537000L, weeklyTrends.getAsOf().getTime());
-		SortedSet<Trends> trendsSet = weeklyTrends.getTrends();
-		assertEquals(2, trendsSet.size());
-		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809960000L, trends.getDate().getTime());
-		Trend firstTrend = trends.getTrends().iterator().next();
-		assertEquals(123, firstTrend.getAmount());
-		assertEquals(0, firstTrend.getDelta());
-		assertEquals("苹果", firstTrend.getName());
-		assertEquals("苹果", firstTrend.getQuery());
-	}
+        assertEquals(getTestDateInMillis(), trends.getDate().getTime());
+        Trend firstTrend = trends.getTrends().iterator().next();
+        assertEquals(123, firstTrend.getAmount());
+        assertEquals(0, firstTrend.getDelta());
+        assertEquals("苹果", firstTrend.getName());
+        assertEquals("苹果", firstTrend.getQuery());
+    }
 
-	@Test
-	public void testGetWeeklyTrendsFilteredByApplication() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/weekly.json?base_app=1"))
-				.andExpect(method(GET))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse(jsonResource("trends"), responseHeaders));
-		TrendsWrapper weeklyTrends = trendTemplate.getWeeklyTrends(true);
-		assertEquals(1280833537000L, weeklyTrends.getAsOf().getTime());
-		SortedSet<Trends> trendsSet = weeklyTrends.getTrends();
-		assertEquals(2, trendsSet.size());
-		Trends trends = trendsSet.iterator().next();
-		assertEquals(1306809960000L, trends.getDate().getTime());
-		Trend firstTrend = trends.getTrends().iterator().next();
-		assertEquals(123, firstTrend.getAmount());
-		assertEquals(0, firstTrend.getDelta());
-		assertEquals("苹果", firstTrend.getName());
-		assertEquals("苹果", firstTrend.getQuery());
-	}
+    @Test
+    public void testGetDailyTrendsFilteredByApplication() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/daily.json?base_app=1")).andExpect(method(GET))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("trends"), responseHeaders));
+        TrendsWrapper dailyTrends = trendTemplate.getDailyTrends(true);
+        assertEquals(1280833537000L, dailyTrends.getAsOf().getTime());
+        SortedSet<Trends> trendsSet = dailyTrends.getTrends();
+        assertEquals(2, trendsSet.size());
+        Trends trends = trendsSet.iterator().next();
+        assertEquals(getTestDateInMillis(), trends.getDate().getTime());
+        Trend firstTrend = trends.getTrends().iterator().next();
+        assertEquals(123, firstTrend.getAmount());
+        assertEquals(0, firstTrend.getDelta());
+        assertEquals("苹果", firstTrend.getName());
+        assertEquals("苹果", firstTrend.getQuery());
+    }
 
-	@Test
-	public void testFollow() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/follow.json"))
-				.andExpect(method(POST))
-				.andExpect(body("trend_name=%E8%8B%B9%E6%9E%9C"))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(
-						withResponse("{\"topicid\":1568197}", responseHeaders));
-		assertEquals(1568197, trendTemplate.follow("苹果"));
-	}
+    @Test
+    public void testGetWeeklyTrends() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/weekly.json")).andExpect(method(GET))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("trends"), responseHeaders));
+        TrendsWrapper weeklyTrends = trendTemplate.getWeeklyTrends();
+        assertEquals(1280833537000L, weeklyTrends.getAsOf().getTime());
+        SortedSet<Trends> trendsSet = weeklyTrends.getTrends();
+        assertEquals(2, trendsSet.size());
+        Trends trends = trendsSet.iterator().next();
+        assertEquals(getTestDateInMillis(), trends.getDate().getTime());
+        Trend firstTrend = trends.getTrends().iterator().next();
+        assertEquals(123, firstTrend.getAmount());
+        assertEquals(0, firstTrend.getDelta());
+        assertEquals("苹果", firstTrend.getName());
+        assertEquals("苹果", firstTrend.getQuery());
+    }
 
-	@Test
-	public void testUnfollow() {
-		mockServer
-				.expect(requestTo("https://api.weibo.com/2/trends/destroy.json"))
-				.andExpect(method(POST)).andExpect(body("trend_id=1"))
-				.andExpect(header("Authorization", "OAuth2 accessToken"))
-				.andRespond(withResponse("{\"result\":true}", responseHeaders));
-		assertTrue(trendTemplate.unfollow(1));
-	}
+    @Test
+    public void testGetWeeklyTrendsFilteredByApplication() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/weekly.json?base_app=1")).andExpect(method(GET))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse(jsonResource("trends"), responseHeaders));
+        TrendsWrapper weeklyTrends = trendTemplate.getWeeklyTrends(true);
+        assertEquals(1280833537000L, weeklyTrends.getAsOf().getTime());
+        SortedSet<Trends> trendsSet = weeklyTrends.getTrends();
+        assertEquals(2, trendsSet.size());
+        Trends trends = trendsSet.iterator().next();
+        assertEquals(getTestDateInMillis(), trends.getDate().getTime());
+        Trend firstTrend = trends.getTrends().iterator().next();
+        assertEquals(123, firstTrend.getAmount());
+        assertEquals(0, firstTrend.getDelta());
+        assertEquals("苹果", firstTrend.getName());
+        assertEquals("苹果", firstTrend.getQuery());
+    }
+
+    @Test
+    public void testFollow() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/follow.json")).andExpect(method(POST))
+                .andExpect(body("trend_name=%E8%8B%B9%E6%9E%9C"))
+                .andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse("{\"topicid\":1568197}", responseHeaders));
+        assertEquals(1568197, trendTemplate.follow("苹果"));
+    }
+
+    @Test
+    public void testUnfollow() {
+        mockServer.expect(requestTo("https://api.weibo.com/2/trends/destroy.json")).andExpect(method(POST))
+                .andExpect(body("trend_id=1")).andExpect(header("Authorization", "OAuth2 accessToken"))
+                .andRespond(withResponse("{\"result\":true}", responseHeaders));
+        assertTrue(trendTemplate.unfollow(1));
+    }
+
+    private long getTestDateInMillis() {
+        Calendar calendar = Calendar.getInstance();
+        calendar.clear();
+        calendar.set(2011, 4, 31, 10, 46, 0);
+        return calendar.getTimeInMillis();
+    }
 }

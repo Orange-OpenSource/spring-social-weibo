@@ -15,10 +15,11 @@
  */
 package org.springframework.social.weibo.api.impl;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.UserOperations;
 import org.springframework.social.weibo.api.WeiboProfile;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 class UserTemplate extends AbstractWeiboOperations implements UserOperations {
 

@@ -23,8 +23,6 @@ import java.util.Map.Entry;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.type.TypeReference;
 import org.springframework.http.HttpInputMessage;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.FormHttpMessageConverter;
@@ -36,6 +34,9 @@ import org.springframework.social.support.ClientHttpRequestFactorySelector;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class WeiboOAuth2Template extends OAuth2Template {
 
@@ -97,7 +98,7 @@ public class WeiboOAuth2Template extends OAuth2Template {
 			logger.debug("access token value = " + accessToken);
 		}
 		return new AccessGrant(accessToken, null, null,
-				expires != null ? Integer.valueOf(expires) : null);
+				expires != null ? Long.valueOf(expires) : null);
 	}
 
 }

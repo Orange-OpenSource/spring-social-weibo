@@ -15,8 +15,6 @@
  */
 package org.springframework.social.weibo.api.impl.json;
 
-import org.codehaus.jackson.Version;
-import org.codehaus.jackson.map.module.SimpleModule;
 import org.springframework.social.weibo.api.ApiRateLimit;
 import org.springframework.social.weibo.api.Comment;
 import org.springframework.social.weibo.api.Favorite;
@@ -29,27 +27,27 @@ import org.springframework.social.weibo.api.UserTrend;
 import org.springframework.social.weibo.api.WeiboProfile;
 import org.springframework.social.weibo.api.impl.json.FavoriteMixin.TagMixin;
 
+import com.fasterxml.jackson.core.Version;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+
 public class WeiboModule extends SimpleModule {
 
-	public WeiboModule() {
-		super("WeiboModule", new Version(1, 0, 0, null));
-	}
+    public WeiboModule() {
+        super("WeiboModule", new Version(1, 0, 0, null));
+    }
 
-	@Override
-	public void setupModule(SetupContext context) {
-		context.setMixInAnnotations(WeiboProfile.class, WeiboProfileMixin.class);
-		context.setMixInAnnotations(Status.class, StatusMixin.class);
-		context.setMixInAnnotations(Comment.class, CommentMixin.class);
-		context.setMixInAnnotations(ApiRateLimit.class, ApiRateLimitMixin.class);
-		context.setMixInAnnotations(RateLimitStatus.class,
-				RateLimitStatusMixin.class);
-		context.setMixInAnnotations(Favorite.class, FavoriteMixin.class);
-		context.setMixInAnnotations(Tag.class, TagMixin.class);
-		context.setMixInAnnotations(UserTrend.class, UserTrendMixin.class);
-		context.setMixInAnnotations(FollowedTrend.class,
-				FollowedTrendMixin.class);
-		context.setMixInAnnotations(TrendsWrapper.class,
-				TrendsWrapperMixin.class);
-	}
+    @Override
+    public void setupModule(SetupContext context) {
+        context.setMixInAnnotations(WeiboProfile.class, WeiboProfileMixin.class);
+        context.setMixInAnnotations(Status.class, StatusMixin.class);
+        context.setMixInAnnotations(Comment.class, CommentMixin.class);
+        context.setMixInAnnotations(ApiRateLimit.class, ApiRateLimitMixin.class);
+        context.setMixInAnnotations(RateLimitStatus.class, RateLimitStatusMixin.class);
+        context.setMixInAnnotations(Favorite.class, FavoriteMixin.class);
+        context.setMixInAnnotations(Tag.class, TagMixin.class);
+        context.setMixInAnnotations(UserTrend.class, UserTrendMixin.class);
+        context.setMixInAnnotations(FollowedTrend.class, FollowedTrendMixin.class);
+        context.setMixInAnnotations(TrendsWrapper.class, TrendsWrapperMixin.class);
+    }
 
 }

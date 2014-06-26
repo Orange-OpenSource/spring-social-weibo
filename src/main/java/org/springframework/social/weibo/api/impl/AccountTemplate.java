@@ -17,10 +17,11 @@ package org.springframework.social.weibo.api.impl;
 
 import java.util.Map;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.AccountOperations;
 import org.springframework.social.weibo.api.RateLimitStatus;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 class AccountTemplate extends AbstractWeiboOperations implements
 		AccountOperations {

@@ -17,8 +17,6 @@ package org.springframework.social.weibo.api.impl;
 
 import java.util.List;
 
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.map.ObjectMapper;
 import org.springframework.social.weibo.api.CursoredList;
 import org.springframework.social.weibo.api.Favorite;
 import org.springframework.social.weibo.api.Favorite.Tag;
@@ -27,6 +25,9 @@ import org.springframework.social.weibo.util.StringUtils;
 import org.springframework.util.LinkedMultiValueMap;
 import org.springframework.util.MultiValueMap;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public class FavoriteTemplate extends AbstractWeiboOperations implements
 		FavoriteOperations {

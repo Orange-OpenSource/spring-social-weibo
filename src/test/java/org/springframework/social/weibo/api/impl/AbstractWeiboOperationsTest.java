@@ -15,7 +15,6 @@
 */
 package org.springframework.social.weibo.api.impl;
 
-import org.codehaus.jackson.map.ObjectMapper;
 import org.junit.Before;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
@@ -23,6 +22,8 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.social.test.client.MockRestServiceServer;
 import org.springframework.web.client.RestTemplate;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 public abstract class AbstractWeiboOperationsTest {
 

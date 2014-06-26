@@ -26,80 +26,76 @@ import java.util.TreeSet;
 
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
-import org.codehaus.jackson.JsonNode;
-import org.codehaus.jackson.JsonParser;
-import org.codehaus.jackson.JsonProcessingException;
-import org.codehaus.jackson.map.DeserializationContext;
-import org.codehaus.jackson.map.JsonDeserializer;
 import org.springframework.social.weibo.api.Trends;
 import org.springframework.social.weibo.api.Trends.Trend;
 
+import com.fasterxml.jackson.core.JsonParser;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.DeserializationContext;
+import com.fasterxml.jackson.databind.JsonDeserializer;
+import com.fasterxml.jackson.databind.JsonNode;
+
 public class TrendsDeserializer extends JsonDeserializer<SortedSet<Trends>> {
 
-	private static final Log logger = LogFactory
-			.getLog(TrendsDeserializer.class.getName());
+    private static final Log logger = LogFactory.getLog(TrendsDeserializer.class.getName());
 
-	private static final Comparator<? super Trends> comparator = new Comparator<Trends>() {
+    private static final Comparator<? super Trends> comparator = new Comparator<Trends>() {
 
-		@Override
-		public int compare(Trends o1, Trends o2) {
-			if (o1.getDate() == null) {
-				if (o2.getDate() == null) {
-					return 0;
-				} else {
-					return 1;
-				}
-			} else if (o2.getDate() == null) {
-				return -1;
-			} else {
-				return o1.getDate().compareTo(o2.getDate());
-			}
-		}
-	};
+        @Override
+        public int compare(Trends o1, Trends o2) {
+            if (o1.getDate() == null) {
+                if (o2.getDate() == null) {
+                    return 0;
+                } else {
+                    return 1;
+                }
+            } else if (o2.getDate() == null) {
+                return -1;
+            } else {
+                return o1.getDate().compareTo(o2.getDate());
+            }
+        }
+    };
 
-	@Override
-	public SortedSet<Trends> deserialize(JsonParser jp,
-			DeserializationContext ctxt) throws IOException,
-			JsonProcessingException {
-		SimpleDateFormat dateFormat = new SimpleDateFormat();
-		TreeSet<Trends> result = new TreeSet<Trends>(comparator);
-		for (Iterator<Entry<String, JsonNode>> iterator = jp.readValueAsTree()
-				.getFields(); iterator.hasNext();) {
-			Entry<String, JsonNode> next = iterator.next();
-			Trends trends = new Trends();
-			try {
-				dateFormat
-						.applyPattern(retrieveDateFormatPattern(next.getKey()));
-				trends.setDate(dateFormat.parse(next.getKey()));
-				JsonNode trendsNode = next.getValue();
-				for (Iterator<JsonNode> iterator2 = trendsNode.getElements(); iterator2
-						.hasNext();) {
-					JsonParser nodeParser = iterator2.next().traverse();
-					nodeParser.setCodec(jp.getCodec());
-					Trend readValueAs = nodeParser.readValueAs(Trend.class);
-					trends.getTrends().add(readValueAs);
-				}
-				result.add(trends);
-			} catch (ParseException e) {
-				logger.warn("Unable to parse date", e);
-			}
-		}
-		return result;
-	}
+    @Override
+    public SortedSet<Trends> deserialize(JsonParser jp, DeserializationContext ctxt) throws IOException,
+            JsonProcessingException {
+        SimpleDateFormat dateFormat = new SimpleDateFormat();
+        TreeSet<Trends> result = new TreeSet<Trends>(comparator);
+        for (Iterator<Entry<String, JsonNode>> iterator = jp.readValueAs(JsonNode.class).fields(); iterator.hasNext();) {
+            Entry<String, JsonNode> next = iterator.next();
+            Trends trends = new Trends();
+            try {
+                dateFormat.applyPattern(retrieveDateFormatPattern(next.getKey()));
+                trends.setDate(dateFormat.parse(next.getKey()));
+                JsonNode trendsNode = next.getValue();
+                for (Iterator<JsonNode> iterator2 = trendsNode.elements(); iterator2.hasNext();) {
+                    JsonParser nodeParser = iterator2.next().traverse();
+                    nodeParser.setCodec(jp.getCodec());
+                    Trend readValueAs = nodeParser.readValueAs(Trend.class);
+                    trends.getTrends().add(readValueAs);
+                }
+                result.add(trends);
+            } catch (ParseException e) {
+                logger.warn("Unable to parse date", e);
+            }
+        }
+        return result;
+    }
 
-	private String retrieveDateFormatPattern(String key) {
-		String result = null;
-		switch (key.length()) {
-		case 19:
-			result = "yyyy-MM-dd HH:mm:ss";
-			break;
-		case 16:
-			result = "yyyy-MM-dd HH:mm";
-			break;
-		default:
-			result = "yyyy-MM-dd";
-			break;
-		}
-		return result;
-	}
+    private String retrieveDateFormatPattern(String key) {
+        String result = null;
+        switch (key.length()) {
+        case 19:
+            result = "yyyy-MM-dd HH:mm:ss";
+            break;
+        case 16:
+            result = "yyyy-MM-dd HH:mm";
+            break;
+        default:
+            result = "yyyy-MM-dd";
+            break;
+        }
+        return result;
+    }
 }
