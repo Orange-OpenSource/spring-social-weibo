@@ -18,6 +18,8 @@ package org.springframework.social.weibo.api;
 public interface AccountOperations {
 
 	long getUid();
+	
+	String getProfileEmail();
 
 	RateLimitStatus getRateLimitStatus();
 

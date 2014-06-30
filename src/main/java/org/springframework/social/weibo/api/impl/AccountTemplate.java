@@ -23,27 +23,27 @@ import org.springframework.web.client.RestTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-class AccountTemplate extends AbstractWeiboOperations implements
-		AccountOperations {
+class AccountTemplate extends AbstractWeiboOperations implements AccountOperations {
 
-	protected AccountTemplate(ObjectMapper objectMapper,
-			RestTemplate restTemplate, boolean isAuthorized) {
-		super(objectMapper, restTemplate, isAuthorized);
-	}
+    protected AccountTemplate(ObjectMapper objectMapper, RestTemplate restTemplate, boolean isAuthorized) {
+        super(objectMapper, restTemplate, isAuthorized);
+    }
 
-	@Override
-	public long getUid() {
-		requireAuthorization();
-		return Long.valueOf(restTemplate
-				.getForObject(buildUri("account/get_uid.json"), Map.class)
-				.get("uid").toString());
-	}
+    @Override
+    public long getUid() {
+        requireAuthorization();
+        return Long.valueOf(restTemplate.getForObject(buildUri("account/get_uid.json"), Map.class).get("uid")
+                .toString());
+    }
 
-	@Override
-	public RateLimitStatus getRateLimitStatus() {
-		requireAuthorization();
-		return restTemplate.getForObject(
-				buildUri("account/rate_limit_status.json"),
-				RateLimitStatus.class);
-	}
+    public String getProfileEmail() {
+        requireAuthorization();
+        return restTemplate.getForObject(buildUri("account/profile/email.json"), Map.class).get("email").toString();
+    }
+
+    @Override
+    public RateLimitStatus getRateLimitStatus() {
+        requireAuthorization();
+        return restTemplate.getForObject(buildUri("account/rate_limit_status.json"), RateLimitStatus.class);
+    }
 }
